@@ -1,0 +1,89 @@
+/*
+ * 多主题:主题色预设通过 body[data-theme-preset] 覆盖 Arco 主色 CSS 变量。
+ * 明暗模式由 body.arco-dark 类驱动(Arco 内置 dark token),见 theme/index.ts。
+ * blue 为 Arco 默认主色,无需覆盖。
+ *
+ * 注意:--primary-1..10 必须用「逗号分隔 RGB 三元组」(如 0, 180, 42),
+ * 组件统一以 rgb(var(--primary-6)) / rgba(var(--primary-6), x) 消费;
+ * 若写成 #hex,这些 var() 调用会整体失效。
+ */
+
+body[data-theme-preset='green'] {
+  --primary-1: 232, 255, 234;
+  --primary-2: 175, 240, 181;
+  --primary-3: 123, 225, 136;
+  --primary-4: 76, 210, 99;
+  --primary-5: 35, 195, 67;
+  --primary-6: 0, 180, 42;
+  --primary-7: 0, 154, 41;
+  --primary-8: 0, 128, 38;
+  --primary-9: 0, 102, 34;
+  --primary-10: 0, 77, 28;
+  --primary-hover: #23c343;
+  --primary-active: #009a29;
+  --primary-light-1: rgba(0, 180, 42, 0.1);
+  --primary-light-2: rgba(0, 180, 42, 0.15);
+  --primary-light-3: rgba(0, 180, 42, 0.2);
+  --primary-light-4: rgba(0, 180, 42, 0.25);
+  --primary-light-5: rgba(0, 180, 42, 0.3);
+}
+
+body[data-theme-preset='purple'] {
+  --primary-1: 245, 232, 255;
+  --primary-2: 221, 190, 255;
+  --primary-3: 195, 150, 237;
+  --primary-4: 168, 113, 227;
+  --primary-5: 141, 78, 218;
+  --primary-6: 114, 46, 209;
+  --primary-7: 85, 29, 176;
+  --primary-8: 60, 16, 137;
+  --primary-9: 42, 10, 99;
+  --primary-10: 23, 5, 66;
+  --primary-hover: #8d4eda;
+  --primary-active: #551db0;
+  --primary-light-1: rgba(114, 46, 209, 0.1);
+  --primary-light-2: rgba(114, 46, 209, 0.15);
+  --primary-light-3: rgba(114, 46, 209, 0.2);
+  --primary-light-4: rgba(114, 46, 209, 0.25);
+  --primary-light-5: rgba(114, 46, 209, 0.3);
+}
+
+body[data-theme-preset='orange'] {
+  --primary-1: 255, 247, 232;
+  --primary-2: 255, 228, 186;
+  --primary-3: 255, 207, 139;
+  --primary-4: 255, 182, 93;
+  --primary-5: 255, 154, 46;
+  --primary-6: 255, 125, 0;
+  --primary-7: 210, 95, 0;
+  --primary-8: 166, 69, 0;
+  --primary-9: 126, 51, 0;
+  --primary-10: 89, 34, 0;
+  --primary-hover: #ff9a2e;
+  --primary-active: #d25f00;
+  --primary-light-1: rgba(255, 125, 0, 0.1);
+  --primary-light-2: rgba(255, 125, 0, 0.15);
+  --primary-light-3: rgba(255, 125, 0, 0.2);
+  --primary-light-4: rgba(255, 125, 0, 0.25);
+  --primary-light-5: rgba(255, 125, 0, 0.3);
+}
+
+body[data-theme-preset='cyan'] {
+  --primary-1: 232, 255, 254;
+  --primary-2: 174, 240, 245;
+  --primary-3: 123, 224, 230;
+  --primary-4: 60, 208, 207;
+  --primary-5: 33, 193, 193;
+  --primary-6: 20, 201, 201;
+  --primary-7: 15, 165, 165;
+  --primary-8: 7, 130, 130;
+  --primary-9: 4, 97, 97;
+  --primary-10: 0, 66, 66;
+  --primary-hover: #21c1c1;
+  --primary-active: #0fa5a5;
+  --primary-light-1: rgba(20, 201, 201, 0.1);
+  --primary-light-2: rgba(20, 201, 201, 0.15);
+  --primary-light-3: rgba(20, 201, 201, 0.2);
+  --primary-light-4: rgba(20, 201, 201, 0.25);
+  --primary-light-5: rgba(20, 201, 201, 0.3);
+}

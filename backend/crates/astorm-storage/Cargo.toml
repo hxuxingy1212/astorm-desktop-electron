@@ -1,0 +1,29 @@
+[package]
+name = "astorm-storage"
+version.workspace = true
+edition.workspace = true
+description = "应用存储层：会话持久化的统一接口 + jsonl / sqlite / 全文索引 后端实现"
+license.workspace = true
+keywords = ["storage", "jsonl", "sqlite", "search", "electron"]
+categories = ["database", "development-tools"]
+
+[lib]
+crate-type = ["rlib"]
+
+[features]
+default = ["jsonl", "sqlite", "index"]
+# 追加式 JSONL 消息历史后端（会话元数据由 SQLite 承载）
+jsonl = []
+# SQLite 结构化后端（结构化元数据 + LIKE 检索）
+sqlite = ["dep:rusqlite"]
+# 全文索引后端（Tantivy）
+index = ["dep:tantivy"]
+
+[dependencies]
+# 记录与存储契约（SessionRecord / MessageRecord / Storage / StorageError 等）来自 astorm-common
+astorm-common = { path = "../astorm-common" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+rusqlite = { version = "0.40", features = ["bundled"], optional = true }
+tantivy = { version = "0.26", optional = true }

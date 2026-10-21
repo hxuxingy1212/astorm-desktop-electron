@@ -1,0 +1,14 @@
+# 依赖构建白名单(pnpm 10 从本文件读取;package.json 的 pnpm 字段在此文件存在时不生效)。
+# electron 自 43 起已无 postinstall,其二进制由 frontend/package.json 的 postinstall 脚本安装。
+# pnpm 11+ 使用 allowBuilds；pnpm 10.33 实测以其 onlyBuiltDependencies 为准，
+# 两套键并存保证新旧 pnpm 都不会忽略构建脚本批准。
+onlyBuiltDependencies:
+  - electron
+  - esbuild
+  - electron-winstaller
+  - vue-demi
+
+allowBuilds:
+  electron-winstaller: true
+  esbuild: true
+  vue-demi: true

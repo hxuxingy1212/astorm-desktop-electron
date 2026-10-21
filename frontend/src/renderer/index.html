@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Astorm Agent</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https: http: astorm-kb: astorm-attachment: astorm-icon:; media-src 'self' astorm-kb:; font-src 'self' data: astorm-kb:; frame-src http: https: astorm-plugin: astorm-kb:"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- 浏览器部署的 window.api 桥:经典脚本先于 module 执行;桌面端 preload 已
+         暴露 window.api 时脚本开头自退,零影响 -->
+    <script src="/web-bridge.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

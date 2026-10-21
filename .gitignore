@@ -1,0 +1,46 @@
+# --- 前端 ---
+node_modules/
+out/
+release/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+gui-test-screenshots/
+.astorm/
+.zcode/
+.idea/
+desktop.ini
+
+# 后端 dll 为构建产物:由 scripts/sync-backend.mjs 从 backend/target 生成,不入库
+frontend/resources/astorm-backend.node
+*.node
+
+# 第三方包意外解包产物(本地发布/解压残留),不入库
+frontend/package/
+
+# --- 后端 ---
+target/
+Cargo.lock
+# Docker 构建需要可复现的锁文件（见 backend/Dockerfile 的 COPY backend/Cargo.lock）
+!backend/Cargo.lock
+.env
+backend/.env
+logs/
+# 内置 PPT 解包程序(json2pptx-cli)为平台构建产物:由 scripts/sync-pptx-cli.mjs 从 ai-ppt 仓库生成,不入库
+frontend/resources/bin/
+# 浏览器自动化 CLI(agent-browser)为平台构建产物:由 scripts/sync-agent-browser.mjs 从源码仓库编译/拷贝,不入库
+frontend/resources/agent-browser/
+# astorm-office 套件(五 CLI：统一入口 + 四格式 + 内置 skill + 预览组件)为外部仓库导出包:由 scripts/sync-office.mjs 拷贝,不入库
+frontend/resources/office/
+
+# office 内置构建源（scripts/sync-office-build.mjs 从 ../astorm-office 同步；manifest 保留）
+backend/.office/**
+!backend/.office/manifest.json
+
+# agent-browser 内置构建源（backend/scripts/sync-agent-browser-src.mjs 从源码仓库同步；manifest 保留）
+backend/.agent-browser/**
+!backend/.agent-browser/manifest.json
+
+# GitHub Pages 预览站构建产物
+frontend/preview-dist/

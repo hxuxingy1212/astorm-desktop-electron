@@ -1,0 +1,136 @@
+/*
+ * 表单/内容类弹窗的统一 macOS 观感（Arco `<a-modal>` 传送至 body，故这里必须是全局非 scoped 样式）。
+ *
+ * 用法：给 `<a-modal>` 加 `modal-class="mac-modal"` 即获得整套骨架
+ * （圆角卡片 + 毛玻璃标题栏 + 发丝线分区 + macOS 按钮形态），
+ * 与 `components/chat/ApprovalBar.vue`、`components/common/MacConfirm.vue` 同一套材质语言。
+ *
+ * 说明：项目里已有四处自带骨架的弹窗（`.fm-modal` / `.agent-modal` / `.mail-compose` /
+ * `.scheduled-modal`），它们的选择器链特异性更高（0,2,0+），这里只提供**缺省骨架**给
+ * 尚未统一的弹窗，不会改变那四处的观感。
+ */
+
+/* 遮罩统一为 macOS 轻压暗（Arco 默认 rgba(29,33,41,.6) 偏重，与 MacConfirm 的 .28 不一致） */
+.arco-modal-mask {
+  background-color: rgba(0, 0, 0, 0.28);
+}
+
+[data-theme='dark'] .arco-modal-mask {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+/* 圆角卡片：14px 圆角 + 半透明底 + 毛玻璃（透明度压到 96%，密集表单仍可读） */
+.mac-modal.arco-modal,
+.mac-modal .arco-modal {
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--bg-base) 96%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px color-mix(in srgb, var(--border-base) 70%, transparent),
+    0 14px 40px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* 标题栏：毛玻璃条 + 0.5px 发丝线分隔 */
+.mac-modal .arco-modal-header {
+  padding: 13px 16px;
+  background-color: color-mix(in srgb, var(--bg-2) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 0.5px solid var(--border-base);
+}
+
+.mac-modal .arco-modal-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+/* 关闭按钮：圆形热区，悬浮才浮现底色（macOS 工具按钮观感） */
+.mac-modal .arco-modal-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--text-tertiary);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.mac-modal .arco-modal-close-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-hover);
+}
+
+.mac-modal .arco-modal-body {
+  padding: 14px 16px;
+}
+
+/* 底部操作区：发丝线上边框 + 右对齐按钮组 */
+.mac-modal .arco-modal-footer {
+  padding: 10px 16px;
+  background-color: color-mix(in srgb, var(--bg-2) 55%, transparent);
+  border-top: 0.5px solid var(--border-base);
+}
+
+/* 按钮形态与 MacConfirm / ApprovalBar 一致：28px 高 / 7px 圆角 / 13px 中等字重 */
+.mac-modal .arco-modal-footer .arco-btn {
+  min-width: 68px;
+  height: 28px;
+  padding: 0 14px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border-radius: 7px;
+  border-color: transparent;
+}
+
+.mac-modal .arco-modal-footer .arco-btn-secondary {
+  color: var(--text-primary);
+  background-color: color-mix(in srgb, var(--bg-5) 20%, transparent);
+}
+
+.mac-modal .arco-modal-footer .arco-btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--bg-5) 32%, transparent);
+}
+
+.mac-modal .arco-modal-footer .arco-btn-primary {
+  color: #fff !important;
+  background-color: var(--accent-text) !important;
+  border-color: var(--accent-text) !important;
+  box-shadow: 0 1px 2.5px rgba(0, 0, 0, 0.18);
+}
+
+.mac-modal .arco-modal-footer .arco-btn-primary:hover {
+  background-color: var(--accent-text) !important;
+  border-color: var(--accent-text) !important;
+  filter: brightness(1.06);
+}
+
+/* 表单控件：填充式圆角 + 聚焦主色描边（与 .agent-modal 同款） */
+.mac-modal .arco-input-wrapper,
+.mac-modal .arco-textarea-wrapper,
+.mac-modal .arco-select-view {
+  background-color: var(--bg-2);
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+.mac-modal .arco-input-wrapper:hover,
+.mac-modal .arco-textarea-wrapper:hover,
+.mac-modal .arco-select-view:hover {
+  background-color: var(--bg-hover);
+  border-color: transparent;
+}
+
+.mac-modal .arco-input-wrapper:focus-within,
+.mac-modal .arco-textarea-wrapper:focus-within,
+.mac-modal .arco-select-view-focus {
+  background-color: var(--bg-base);
+  border-color: var(--accent-text);
+}

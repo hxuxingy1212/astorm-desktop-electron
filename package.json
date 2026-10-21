@@ -1,0 +1,33 @@
+{
+  "name": "astorm-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Astorm Desktop monorepo: Electron + Vue 3 前端与 Rust 后端统一管理",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "postinstall": "pnpm -C frontend install",
+    "build": "node scripts/build.mjs",
+    "build:backend": "node scripts/sync-backend.mjs",
+    "build:frontend": "node scripts/sync-office.mjs && pnpm -C frontend build",
+    "build:preview": "pnpm -C frontend build:preview",
+    "dev:preview": "pnpm -C frontend dev:preview",
+    "dev": "node scripts/dev.mjs",
+    "sync-backend": "node scripts/sync-backend.mjs",
+    "gen:mail-brands": "node scripts/gen-mail-brands.mjs",
+    "typecheck": "pnpm -C frontend typecheck",
+    "test:atomic-write": "node --test frontend/scripts/test/atomic-write.test.mjs",
+    "test:backend": "cargo test --manifest-path backend/Cargo.toml -p astorm-tests -- --ignored",
+    "sync:office": "node scripts/sync-office.mjs",
+    "sync:agent-browser": "node scripts/sync-agent-browser.mjs",
+    "sync:office-build": "node backend/scripts/sync-office-build.mjs",
+    "sync:agent-browser-src": "node backend/scripts/sync-agent-browser-src.mjs",
+    "verify:dist": "node scripts/verify-dist.mjs",
+    "dist:mac": "node scripts/build.mjs && node scripts/verify-dist.mjs --target darwin && pnpm -C frontend exec electron-builder --mac dmg zip",
+    "dist:win": "node scripts/build.mjs && node scripts/verify-dist.mjs --target win32 && pnpm -C frontend exec electron-builder --win",
+    "dist:linux": "node scripts/build.mjs && node scripts/verify-dist.mjs --target linux && pnpm -C frontend exec electron-builder --linux",
+    "test:e2e:onboarding": "node frontend/scripts/e2e/onboarding.mjs",
+    "test:e2e:fileref": "node frontend/scripts/e2e/fileref.mjs",
+    "test:e2e:summarytitle": "node frontend/scripts/e2e/summary-title.mjs",
+    "test:e2e:goal": "node frontend/scripts/e2e/goal.mjs"
+  }
+}

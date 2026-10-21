@@ -1,0 +1,150 @@
+/*
+ * 设计 Token(浅色):侧栏与对话列表等自定义组件使用。
+ * 主色系列引用 Arco 的 --color-primary-*,跟随应用的主题色预设。
+ */
+:root {
+  /* 背景色阶 */
+  --bg-base: #ffffff;
+  --bg-1: #f7f8fa;
+  --bg-2: #f2f3f5;
+  --bg-3: #e5e6eb;
+  --bg-4: #c9cdd4;
+  --bg-5: #86909c;
+
+  /* 侧栏固定实色（窗口模式玻璃层的等效观感；不再使用依赖桌面背景的半透明色） */
+  --sidebar-solid-bg: #f7f8fa;
+
+  /* 文字色阶：Codex 的中性灰档（浅色 #262626 / #5d5d5d，深色见 color-scheme.css） */
+  --text-primary: #262626;
+  --text-secondary: #5d5d5d;
+  --text-tertiary: #8a8a8a;
+  --text-disabled: #c9cdd4;
+  /* 顶栏会话标题：比正文更深一档（Codex gray-900） */
+  --text-title: #181818;
+  /* 会话正文：浅色与主文字同档；暗色低一档（见 color-scheme.css） */
+  --text-body: #262626;
+
+  /* Arco 组件文字色(select/下拉/提示等渲染层,覆盖 arco.css 默认值,与上表对齐) */
+  --color-text-1: var(--text-primary);
+  --color-text-2: var(--text-secondary);
+  --color-text-3: var(--text-tertiary);
+  --color-text-4: var(--text-disabled);
+
+  /* 功能色(主色跟随 Arco 主题色预设) */
+  --primary: var(--color-primary-6);
+  --primary-hover: var(--color-primary-5);
+  --primary-active: var(--color-primary-7);
+  --primary-light: var(--color-primary-light-1);
+
+  /* 强调文字色:随明暗主题微调(暗色下取更亮档保证对比,见 color-scheme.css)。
+   注意:本 Arco 版本下 --primary/--color-primary-* 链无法解析;且自定义属性值内嵌套
+   var()(如 rgb(var(--arcoblue-*)))也会失效,故直接给最终色值 */
+  --accent-text: #165dff;
+  /* 链接 / 文件引用文字：浅色与强调色同值；暗色提亮成柔和浅蓝（见 color-scheme.css） */
+  --link-text: #165dff;
+  --success: #00b42a;
+  --warning: #ff7d00;
+  --danger: #f53f3f;
+  --info: #1677ff;
+
+  /* 文件图标品牌色(自定义可调;暗色下对应提亮值见 color-scheme.css):
+     按文件类型区分,统一在此处配置,换主题/品牌色只需改这里 */
+  --ficon-folder: #b58a00;
+  --ficon-code: #3178c6;
+  --ficon-data: #b58900;
+  --ficon-doc: #0e9a94;
+  --ficon-config: #b45309;
+  --ficon-shell: #16a34a;
+  --ficon-media: #db2777;
+  --ficon-archive: #ea580c;
+  --ficon-sheet: #0d9488;
+  --ficon-deck: #d97706;
+  --ficon-db: #7c3aed;
+  --ficon-lock: #64748b;
+  --ficon-build: #9333ea;
+
+
+  /* 边框 */
+  --border-base: #e5e6eb;
+  --border-light: #f2f3f5;
+  --border-strong: #c9cdd4;
+
+  /* 交互态 */
+  --bg-hover: #f2f3f5;
+  --bg-active: #e5e6eb;
+
+  /* 右侧面板(状态栏/对话区/页签区):浅色模式白底,暗色模式纯黑 */
+  --panel-bg: #ffffff;
+  --panel-border: #e5e6eb;
+
+  /* 圆角 / 动效 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-full: 999px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+
+  /*
+   * ===== 字体体系（唯一出处；用法见 docs/ui-style.md §1.1 的刻度表）=====
+   *
+   * 刻度取自参考实现（Codex）：它的设计令牌是 12 / 14 / 16 / 18 四档（text-xs/sm/md/lg），
+   * 渲染实测（同一台机、DPR 2、窗口 1090×760 的截图）：
+   *   - 侧栏项与会话正文 汉字中心距 27.8~28.0 物理 px（÷2 = 14.0 CSS px）→ **14px 是 UI 与正文的主档**；
+   *   - 代码行字符步距 7.51 CSS px（÷0.6em = 12.5px）、行距 20 物理/2 = 20 CSS px → **代码 12.5px / 行高 20px**；
+   *   - 正文行高按本地 Codex 视觉校准为 1.5，避免对话正文显得松散。
+   *
+   * 只允许用下面这几档；离档的值（10 / 11.5 / 13.5 / 15 / 16…）一律就近归到档位，不要新增。
+   */
+  --font-size-2xs: 11px; /* 极小角标 / 计数（少量） */
+  --font-size-xs: 12px; /* 分组标签、时间戳、快捷键、分区小标题 */
+  --font-size-sm: 13px; /* 次级说明、菜单项、chip、状态行、工具执行行 */
+  --font-size-md: 14px; /* UI 默认：导航项、列表项、标签页、输入框、**会话正文** */
+  --font-size-title: 15px; /* 设置行标题、卡片标题（与 h4 同档） */
+  --font-size-code: 12.5px; /* 代码 / 命令 / 路径（配 --font-mono；文件预览同档） */
+  --font-size-lg: 17px; /* 卡片 / 区块标题 */
+  --font-size-xl: 20px; /* 区块大标题（页面内，少用） */
+  --font-size-2xl: 28px; /* 页面级大标题（设置页 / 视图页标题） */
+
+  --line-height-tight: 1.35; /* 单行控件、角标 */
+  --nav-item-height: 32px; /* 侧栏与设置导航 */
+  --menu-item-height: 28px; /* 右键与下拉菜单 */
+  --line-height-ui: 1.2; /* UI 控件与列表行，按本地 Codex 视觉校准 */
+  --line-height-code: 1.6; /* 代码块（实测 20px / 12.5px） */
+  --line-height-body: 1.5; /* 正文：比默认 relaxed 更紧凑 */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600; /* 不用 700：中文粗体在 macOS 上会糊 */
+
+  /* 字体族：直接使用操作系统默认 UI 字体（system-ui），其余为跨平台 / 中文回落。
+     不引入任何 Web 字体（离线可用、无 FOIT）。 */
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Cascadia Code', monospace;
+
+  /* 阴影(设置页卡片等自定义组件使用) */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.16);
+
+  /* 面板伸缩专用:100ms,拖拽跟手 */
+  --transition-panel: 0.1s ease;
+
+  /*
+   * macOS 观感的三个「填充层」：都由**文字色**混合而来 ⇒ 明暗主题自动跟随，不必各写一套。
+   * 定义在全局而不是某个页面里：抽屉/弹窗会被 teleport 到 body，页面级自定义属性
+   * 在里面解析不到 → var() 失效、控件失去底色（曾因此让抽屉页签看起来「没有按钮」）。
+   */
+  --fill-1: color-mix(in srgb, var(--text-primary) 5%, transparent);
+  --fill-2: color-mix(in srgb, var(--text-primary) 9%, transparent);
+  --fill-3: color-mix(in srgb, var(--text-primary) 15%, transparent);
+
+  /* 可交互静态面:浅色白底,暗色由 color-scheme.css 覆盖为亮填充 */
+  --surface-bg: #ffffff;
+  /* 悬浮卡独立于页面与静态卡片，暗色覆盖为更亮的面。 */
+  --hover-card-bg: #ffffff;
+  --hover-card-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+}

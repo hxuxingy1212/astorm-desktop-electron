@@ -1,0 +1,601 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  /* 字体体系入口（令牌见 themes/base.css、刻度表见 docs/ui-style.md §1.1）：
+     此前应用自身没有 font-family，实际字体来自 Arco 内置栈里的 Inter（**未打包**，
+     在没装 Inter 的机器上落到系统栈）；这里显式走系统栈，中文回落 PingFang SC。
+     基础字号 = UI 默认档 14px（不再沿用浏览器默认的 16px）。 */
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 无边框窗口的拖拽区域 */
+.app-region-drag {
+  -webkit-app-region: drag;
+}
+
+.app-region-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/*
+ * 浮层必须显式声明 no-drag。
+ *
+ * 状态栏那一行（`.app-region-drag`，满宽 44px）是窗口拖拽区，而 Electron 的拖拽区是**系统级**的：
+ * 命中该区域的真实鼠标事件被窗口管理器拿去拖窗口，不会传给页面。关键坑在于——被更高层级元素
+ * （抽屉、弹窗）盖住也**不会**自动让出，必须由覆盖者显式写 `no-drag` 才能拿到点击。
+ * 因此「看得见、点不动」是本项目里这个坑的唯一症状（程序化 el.click() 不受影响，所以自动化测试
+ * 也测不出来）；状态栏自己的按钮一直是靠 app-region-no-drag 才可点的，抽屉此前没被覆盖到。
+ *
+ * 后果：抽屉打开后，其标题栏所在的那条顶部条带不再能拖窗口（其余区域照旧可拖）——与 macOS
+ * sheet 的行为一致，可接受。
+ */
+.arco-drawer,
+.arco-drawer-header,
+.arco-drawer-body,
+.arco-drawer-footer,
+.arco-drawer-mask,
+.arco-drawer-close-btn,
+.arco-modal {
+  -webkit-app-region: no-drag;
+}
+
+/* 状态栏窗口控制按钮样式见 StatusBar.vue 的 .win-controls(原生风格细线图标) */
+
+/* 对话列与输入框共享的宽度体系:同宽、最大/最小宽度、响应式边距
+   伸缩优先级:内容优先 —— 对话区 ≤960px 时文本列铺满(左右无留白),
+   超过 960px 后才出现留白(缩小对话区时留白先消失,内容后收缩) */
+:root {
+  /* 对话内容列的最大宽度(文本列 / 输入框 / 错误条 / 状态行共用)。
+     抽成 token 是因为**悬浮元素要按「半个内容列」定宽**:
+     任务规划胶囊展开宽度 = var(--chat-column-max) / 2,写死 480px 会与这里悄悄脱钩。 */
+  --chat-column-max: 960px;
+  /* 对话区底部栈（状态行 + 错误条 + 输入框）的**常驻**高度估计值。
+     左侧快捷轨按「对话区高度 − 本值」纵向居中（见 ChatMessageRail.vue）：
+     用常量而不是实时测量的高度，才能让轨线在「向下」按钮出现/消失、
+     错误条/排队条出现时不跟着上下跳 —— 本值偏大只会让轨线略微偏上，
+     不会造成位移。输入区高度有较大调整时改这里。 */
+  --chat-rail-reserve: 160px;
+}
+
+.chat-column {
+  width: 100%;
+  /* 最大宽度:铺满对话区,上限 --chat-column-max(内容先长,留白后长) */
+  max-width: min(100%, var(--chat-column-max));
+  /* 最小宽度:空间允许时不低于 480px;被页签区挤到 480px 以下时跟随容器,避免溢出 */
+  min-width: min(100%, 480px);
+  margin-left: auto;
+  margin-right: auto;
+  /* 边距:始终约对话区宽度 2.5%(最窄 480px 时 12px),最大 48px;
+     与窗口伸缩保持同一比例,窄对话区不显局促 */
+  padding-left: clamp(12px, 2.5%, 48px);
+  padding-right: clamp(12px, 2.5%, 48px);
+}
+
+/* ===== 用户消息快捷轨(ChatMessageRail.vue):只落在内容列左侧的留白里 =====
+   定位与显隐放在这里(而非组件的 scoped 样式),因为它取决于**对话区宽度**而非组件自身:
+   - 水平的 x 要相对容器算(容器宽 W 时内容列左缘 = 50% − 内容列半宽),故用 --chat-column-max;
+   - 留白不足时整体隐藏:内容列宽 = min(100%, 960px),故 W ≥ 960 起才有左右留白,
+     轨线还要占 30px + 与内容列的间隙。这里用 max() 把 x 兜到离对话区左缘 8px:
+     留白够宽时轨线停在「内容列左缘 − 34px」,留白被挤到 20px 上下时改为贴左缘 8px
+     (轨线右缘 38px,此时正文左缘 = 留白 + 内容列自身内边距 clamp(12px,2.5%,48px) ≈ 44px,
+      仍有约 6px 净空 → 不压正文)。再窄就查不到位置了,由容器查询整体隐藏:
+     W < 1000px / 右侧页签挤压 / 子会话内嵌形态都由此兜住,组件里不再做宽度分支。
+   纵向:轨线是 .chat-section(高 h-full,**高度恒定**)的绝对定位子节点,按
+   「高度 − --chat-rail-reserve」居中 —— 既不随对话内容滚动,也不随底部栈高度变化而移位。
+   容器查询需要父级是查询容器 → .chat-section 声明 container-type。 */
+.chat-section {
+  container-type: inline-size;
+}
+
+.msg-rail {
+  /* 常规:与内容列左缘保持 34px 间距(轨线定宽 30px,右缘离内容列约 4px);
+     窄对话区(留白不足 34px)时兜到离左缘 8px,避免溢出到侧栏分隔线上 */
+  left: max(8px, calc(50% - min(50%, calc(var(--chat-column-max) / 2)) - 34px));
+  display: none;
+}
+
+@container (min-width: 1000px) {
+  .msg-rail {
+    display: flex;
+  }
+}
+
+/* ===== 全屏模式:顶部工具栏与左侧菜单栏放大(高度/字体/行高/控件尺寸) ===== */
+html[data-fullscreen='true'] header {
+  height: 52px;
+}
+
+html[data-fullscreen='true'] header .topbar-btn {
+  width: 42px;
+  height: 42px;
+}
+
+html[data-fullscreen='true'] header svg {
+  width: 20px;
+  height: 20px;
+}
+
+html[data-fullscreen='true'] .chat-title-in-bar {
+  font-size: var(--font-size-title);
+}
+
+html[data-fullscreen='true'] .chat-meta-chip {
+  font-size: var(--font-size-xs);
+}
+
+html[data-fullscreen='true'] .nav-sider .sider-brand {
+  height: 52px;
+  /* 全屏下系统自动隐藏红黄绿,品牌行缩回常规左侧间距(覆盖 mac 的 pl-[76px] 预留) */
+  padding-left: 12px;
+}
+
+html[data-fullscreen='true'] .nav-sider .sider-brand .brand-title {
+  font-size: var(--font-size-lg);
+}
+
+html[data-fullscreen='true'] .nav-sider img {
+  width: 34px;
+  height: 34px;
+}
+
+html[data-fullscreen='true'] .nav-sider svg {
+  width: 20px;
+  height: 20px;
+}
+
+html[data-fullscreen='true'] .nav-sider .toolbar-btn,
+html[data-fullscreen='true'] .nav-sider .footer-btn {
+  height: 42px;
+  font-size: var(--font-size-md);
+}
+
+html[data-fullscreen='true'] .nav-sider .new-chat-btn {
+  height: 46px;
+}
+
+html[data-fullscreen='true'] .nav-sider .drop-label {
+  font-size: var(--font-size-md);
+}
+
+html[data-fullscreen='true'] .nav-sider .tree-session-title,
+html[data-fullscreen='true'] .nav-sider .tree-project-name {
+  font-size: var(--font-size-md);
+}
+
+html[data-fullscreen='true'] .nav-sider .session-time {
+  font-size: var(--font-size-xs);
+}
+
+/* 设置页/设置弹窗共用样式 */
+.settings-section {
+  margin-bottom: 22px;
+}.settings-section:last-child {
+  margin-bottom: 4px;
+}
+
+.settings-label {
+  margin-bottom: 10px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-2);
+}
+
+.preset-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    border-color 0.15s;
+}
+
+.preset-dot:hover {
+  transform: scale(1.1);
+}
+
+.preset-dot-active {
+  border-color: var(--color-text-1);
+}
+
+/*
+ * 细滚动条：全应用**唯一一处**定义（组件里不要再写 scrollbar-width / scrollbar-color 或
+ * ::-webkit-scrollbar —— 那些会切到 Chromium 原生条：macOS 是不占位的叠加条、Windows 是 11px
+ * 粗条，于是站内混着三套粗细/行为）。
+ *
+ * 形态：4px 细条，thumb 走 --color-fill-3（悬停 --color-fill-4），轨道透明。
+ * 行为：**空闲不显示，滚动时才出现**（滚完约 1.2s 淡出）。
+ *   `is-scrolling` 由 services/scrollbars.ts 按「用户输入」打（滚轮 / 触控 / 滚动键 / 拖滚动条）；
+ *   程序化滚动（流式回答自动到底、scrollIntoView、开面板恢复位置）不触发，否则回答期间长亮。
+ *   默认 thumb 透明而不是 display:none：伪元素仍占位，出现/消失时轨道不跳。
+ * 占位：滚动容器由 services/scrollbars.ts 打 `data-scroll-gutter`（= scrollbar-gutter: stable），
+ *   内容不因滚动条出现/消失而左右移位。**不能改写成全局 `*` 规则** —— 实测 Chromium 对
+ *   `overflow: hidden` 的裁剪容器也生效，全局写会把所有圆角/截断容器的内容统统缩掉 4px。
+ */
+:root {
+  --scrollbar-size: 4px;
+}
+
+[data-scroll-gutter] {
+  scrollbar-gutter: stable;
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.is-scrolling::-webkit-scrollbar-thumb {
+  background: var(--color-fill-3);
+}
+
+.is-scrolling::-webkit-scrollbar-thumb:hover {
+  background: var(--color-fill-4);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/*
+ * Arco 自带滚动条组件（`a-select` 下拉、`a-dropdown` 弹层、穿梭框、日历等内部在用）：
+ * 它是自绘的 div，不属于上面那套伪元素，默认 15px 轨 / 9px thumb 且**常亮** —— 站内「粗滚动条」
+ * 的主要来源。这里并到同一形态（4px）与同一行为（空闲隐藏、滚动/拖动时显示；它本身是叠加层，
+ * 不占内容宽度，故不存在挤动问题）。颜色沿用 Arco 的 --color-neutral-*（样式不变）。
+ */
+.arco-scrollbar-track-direction-vertical {
+  width: var(--scrollbar-size);
+}
+
+.arco-scrollbar-track-direction-horizontal {
+  height: var(--scrollbar-size);
+}
+
+.arco-scrollbar-thumb-direction-vertical .arco-scrollbar-thumb-bar {
+  width: var(--scrollbar-size);
+  margin: 0;
+  border-radius: 2px;
+}
+
+.arco-scrollbar-thumb-direction-horizontal .arco-scrollbar-thumb-bar {
+  height: var(--scrollbar-size);
+  margin: 0;
+  border-radius: 2px;
+}
+
+.arco-scrollbar .arco-scrollbar-thumb {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* 显示时机跟伪元素那套一致：内容容器被滚（is-scrolling）/ 正在拖 thumb */
+.arco-scrollbar:has(.arco-scrollbar-container.is-scrolling) .arco-scrollbar-thumb,
+.arco-scrollbar .arco-scrollbar-thumb-dragging {
+  opacity: 1;
+}
+
+/* Arco 下拉列表:为滚动条预留右侧间距,选项(含高亮底色)不被滚动条遮挡 */
+.arco-select-dropdown .arco-select-dropdown-list {
+  padding-right: 10px;
+}
+
+/* ===== Arco 主题色(蓝)控件统一为灰色 —— 对齐 astorm-desktop 的配置 ===== */
+.arco-btn-text {
+  color: var(--text-secondary) !important;
+}
+
+.arco-btn-text:hover {
+  background-color: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.arco-btn-primary {
+  background-color: var(--bg-5) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text-primary) !important;
+}
+
+.arco-btn-primary:hover {
+  background-color: var(--bg-4) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.arco-btn-secondary {
+  color: var(--text-primary) !important;
+  border-color: var(--border-base) !important;
+  background-color: var(--bg-2) !important;
+}
+
+.arco-btn-secondary:hover {
+  background-color: var(--bg-hover) !important;
+  border-color: var(--border-base) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Checkbox 主题适配 */
+.arco-checkbox {
+  color: var(--text-primary) !important;
+}
+
+.arco-checkbox-label {
+  color: var(--text-primary) !important;
+}
+
+.arco-checkbox-icon {
+  background-color: var(--bg-base) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.arco-checkbox:hover .arco-checkbox-icon {
+  border-color: var(--border-strong) !important;
+}
+
+.arco-checkbox-checked .arco-checkbox-icon {
+  background-color: var(--bg-5) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.arco-checkbox:hover .arco-checkbox-icon-hover::before {
+  background-color: var(--bg-hover) !important;
+}
+
+.arco-checkbox > input[type='checkbox']:focus-visible + .arco-checkbox-icon-hover::before {
+  background-color: var(--bg-hover) !important;
+}
+
+.arco-checkbox-checked .arco-checkbox-icon-check {
+  color: #fff !important;
+}
+
+/* Switch 滑块:选中态使用浅灰 */
+.arco-switch {
+  background-color: var(--bg-4) !important;
+}
+
+.arco-switch.arco-switch-checked {
+  background-color: var(--bg-5) !important;
+}
+
+/* Radio button 选中态使用浅灰 */
+.arco-radio-button.arco-radio-checked {
+  background-color: var(--bg-5) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text-primary) !important;
+}
+
+.arco-radio-button.arco-radio-checked::after {
+  background-color: var(--bg-5) !important;
+}
+
+/* Button 非 primary 类型 hover 风格统一 */
+.arco-btn:not(.arco-btn-primary):hover {
+  color: var(--text-primary) !important;
+  border-color: var(--border-strong) !important;
+  background-color: var(--bg-hover) !important;
+}
+
+/* Arco a-input-search 外框默认透明,统一补一个可见边框 */
+.arco-input-search,
+.arco-input-search:hover,
+.arco-input-search:focus-within {
+  border-color: var(--border-strong);
+}
+
+/* ===== Markdown 代码块 HTML 预览(vue-stream-markdown 内置 iframe) =====
+   预览 iframe 的文档画布默认透明,自身又有 UA 配色;暗色主题下会透出聊天区
+   深色底,而默认文字仍是黑色 → 文字不可见。这里把预览固定为「亮色纸面」,
+   与应用主题、系统暗色模式解耦,明暗两种模式下预览表现完全一致:
+   - background-color:#fff —— 画布透明时由 iframe 元素自身补上白底;
+   - color-scheme:light   —— 内嵌文档按亮色渲染(默认文字黑、表单控件浅底),
+                             避免系统暗色时控件变深色。
+   选择器不带 .stream-markdown 前缀:全屏模态会 Teleport 到
+   #stream-markdown-overlay,前缀式选择器在全屏下会失效。 */
+[data-stream-markdown='html-previewer'] {
+  color-scheme: light;
+  background-color: #fff;
+}
+
+/* ===== Markdown 代码块头部:取消 vue-stream-markdown 的吸顶(sticky) =====
+   库给代码块头部带了 `sticky top-0 z-[5]` + 半透明底(bg-muted/80),本意是长代码块
+   滚动时语言标识 / 复制按钮始终可见。但会话消息区自身就是滚动容器(.chat-messages),
+   于是它会一直钉在消息区顶部、与自己的代码正文分离:标题栏往下滑、压住后面的内容,
+   半透明底还会把正文透出来,看着像浮动残影(即「代码标签随滚动下移脱离原位置」)。
+   这里改为不吸顶、随代码块一起滚 —— 与仓内自绘的 CodeBlock.vue 头部一致
+   (头部不做吸顶,长代码块由代码体自身 max-height 内滚)。
+   选择器不带 .stream-markdown 前缀:全屏模态会 Teleport 到 #stream-markdown-overlay,
+   前缀式选择器在全屏下会失效(与上面 html-previewer 同一处理)。
+   `!important`:global.css 在 main.ts 里先于库样式引入,而库的 `.stream-markdown .sticky`
+   与本选择器特异度相同,不加它会被后加载的库规则盖住(库内该属性无 !important)。 */
+[data-stream-markdown='code-block-header'] {
+  position: static !important;
+}
+
+/* ===== Markdown 代码块正文:字号 / 行高按字体体系(docs/ui-style.md §4.3) =====
+   库自带的是 Tailwind `text-sm`(14px/20px),比参考实现实测的代码档大一档
+   (参考:字符步距 7.51 CSS px ÷ 0.6em = 12.5px,行距 20 CSS px = 1.6)。
+   `!important` 同上一段的理由:库规则后加载且特异度不低。 */
+.stream-markdown pre,
+.stream-markdown pre code,
+.stream-markdown pre .shiki,
+.stream-markdown pre .shiki code,
+/* 每一行是库自绘的 div（class 带 text-sm = 14px，会盖掉 pre/code 的继承值，
+   实测：pre/code 12.5px 但 code-line 14px —— 行号与正文都挂在这一层），
+   以及行号（::before 伪元素，库给的是 13px） */
+.stream-markdown [data-stream-markdown='code-line'],
+.stream-markdown [data-stream-markdown='code-line']::before {
+  font-size: var(--font-size-code) !important;
+  line-height: var(--line-height-code) !important;
+}
+
+/* ===== 顶部轻提示(Arco Message)→ macOS HUD 风格 =====
+   Message 挂在 body 级容器(.arco-message-list),scoped 样式碰不到,只能全局覆盖。
+   配方与仓内既有材质卡一致(ChatPanel 错误条 / ApprovalBar / ChatFormBar):
+   0.5px 发丝边 + 毛玻璃(blur 20px saturate 180%) + 圆角 14px + 两级软投影;
+   用 --bg-2 做半透明底而非 --panel-bg(暗色下 panel-bg 是纯黑,实心太硬)。
+   各等级的底色/边框在 arco.css 里是同优先级的类(.arco-message-<type>),本文件后加载
+   → 必须把它们一起写进选择器,否则等级底色会赢过这里的覆盖。 */
+.arco-message-list-top {
+  /* 让出顶部标题栏(top:52px),避免压住红绿灯/工具条 */
+  top: 52px;
+}
+
+.arco-message,
+.arco-message-info,
+.arco-message-success,
+.arco-message-warning,
+.arco-message-error,
+.arco-message-loading {
+  padding: 8px 14px;
+  border: 0.5px solid color-mix(in srgb, var(--border-strong) 55%, transparent);
+  border-radius: 14px;
+  background-color: color-mix(in srgb, var(--bg-2) 88%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  line-height: 1.4;
+  animation: astorm-hud-in 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes astorm-hud-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+/* 图标收小到正文量级(macOS 提示里图标不喧宾夺主);颜色沿用 Arco 的等级色
+   rgb(var(--<semantic>-6)),它跟随主题色预设(绿/紫/橙/青)，比写死色值更稳 */
+.arco-message-icon {
+  margin-right: 8px;
+  font-size: var(--font-size-title);
+}
+
+/* 只调字号/字重,不接管颜色:正文颜色由 Arco 各等级规则给出(color: var(--color-text-1)),
+   而 --color-text-* 由应用在 body[arco-theme='dark'] 下按主题切好(见 color-scheme.css),
+   明暗都成立。这里若再写 color 会与等级规则同特异度互抢,一旦加载顺序变化就会
+   暗色下深字压深底。 */
+.arco-message-content {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.arco-message-close-btn {
+  margin-left: 10px;
+  color: var(--text-tertiary);
+}
+
+.arco-message-close-btn:hover {
+  color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arco-message,
+  .arco-message-info,
+  .arco-message-success,
+  .arco-message-warning,
+  .arco-message-error,
+  .arco-message-loading {
+    animation: none;
+  }
+}
+
+/* ===== 说明卡片(Arco Tooltip / Popover 内容浮层)→ 与应用主题统一的材质卡 =====
+   Arco 默认 Tooltip 恒为深色气泡(--color-tooltip-bg + color:#fff)、Popover 用 Arco 自带的
+   白/深底,均未跟随本应用的自定义设计 token(明暗切换时会与周围卡片观感不一致)。
+   这里统一到应用既有浮层卡片配方(--bg-1 底 + 两级软投影),文字用 --text-primary/secondary,
+   与 Chat 内手写的引用/元素/技能气泡卡片(ElementPill / QuotePill / SkillAttachment)同款;
+   亮/暗主题自动切换。浮层挂在 body 级(Arco portal),scoped 样式碰不到,故只能全局覆盖。 */
+.arco-tooltip-content {
+  max-width: 360px;
+  padding: 8px 12px;
+  color: var(--text-primary) !important;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  background-color: var(--bg-1) !important;
+  border-radius: 10px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+/* 箭头与卡片同底(Arco 的 tooltip 箭头无边框,这里只改底色,避免出现接缝) */
+.arco-tooltip-popup-arrow {
+  background-color: var(--bg-1) !important;
+}
+
+/* 注意:这里**不加 `!important`**。自定义 content-class 的气泡卡(ElementPill / QuotePill /
+   SkillAttachment)会用更高特异度的 `.xxx.xxx` 抹掉这层外框、只保留内层卡片;若在此加
+   `!important` 会强行恢复外框,令它们重新变成「两层壳」。global.css 晚于 arco.css 加载,
+   不加 `!important` 也足以覆盖 Arco 默认值。 */
+.arco-popover-popup-content {
+  padding: 12px 14px;
+  color: var(--text-primary);
+  background-color: var(--bg-1);
+  border: 0.5px solid var(--border-base);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+.arco-popover-popup-arrow {
+  background-color: var(--bg-1);
+  border-color: var(--border-base);
+}
+
+/* 半透明偏好:说明卡片本就是实心底,无需处理;此处仅在系统开启「降低透明度」时
+   去掉可能由主题叠加产生的额外模糊,保证文字可读。 */
+@media (prefers-reduced-transparency: reduce) {
+  .arco-tooltip-content,
+  .arco-popover-popup-content {
+    backdrop-filter: none;
+  }
+}
+
+/* 菜单项统一紧凑高度；浮层 teleport 到 body，覆盖集中在全局。 */
+.arco-dropdown-option {
+  box-sizing: border-box;
+  height: var(--menu-item-height);
+  min-height: var(--menu-item-height);
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: var(--line-height-ui);
+}
+
+.arco-dropdown-option-content {
+  line-height: var(--line-height-ui);
+}
+
+/* 清除原生玻璃上方的页面画布，右侧 app-right-card 自行保留不透明底。 */
+html[data-sidebar-glass='true'],
+html[data-sidebar-glass='true'] body,
+html[data-sidebar-glass='true'] #app {
+  background-color: transparent;
+}

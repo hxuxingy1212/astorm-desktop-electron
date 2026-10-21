@@ -1,0 +1,242 @@
+/* ------------------------------------------------------------------ *
+ * 文档页：左侧目录 + 右侧长文
+ * 复用 site.css 的导航、按钮、主题令牌与背景光晕
+ * ------------------------------------------------------------------ */
+.docs-main {
+  position: relative;
+  z-index: 1;
+  padding: clamp(32px, 4vw, 56px) 0 clamp(64px, 8vw, 110px);
+}
+
+.docs-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+.docs-toc {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 112px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.docs-toc-title {
+  margin-bottom: 12px;
+  color: var(--site-text-mute);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.docs-toc nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docs-toc a {
+  padding: 6px 9px;
+  border-radius: 7px;
+  color: var(--site-text-soft);
+  font-size: 13px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.docs-toc a:hover {
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+}
+
+.docs-content {
+  width: 100%;
+  max-width: 840px;
+  min-width: 0;
+}
+
+.docs-content h1 {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-weight: 650;
+}
+
+.docs-lead {
+  margin: 16px 0 0;
+  color: var(--site-text-soft);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.docs-section {
+  scroll-margin-top: 88px;
+  margin-top: 44px;
+}
+
+.docs-section h2 {
+  margin: 0 0 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--site-border);
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-weight: 620;
+}
+
+.docs-section h3 {
+  margin: 22px 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.docs-section p {
+  margin: 12px 0 0;
+  color: var(--site-text-soft);
+  font-size: 14.5px;
+  line-height: 1.8;
+}
+
+.docs-section ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: var(--site-text-soft);
+  font-size: 14.5px;
+  line-height: 1.8;
+}
+
+.docs-section li {
+  margin: 5px 0;
+  padding-left: 2px;
+}
+
+.docs-section li::marker {
+  color: var(--site-accent);
+}
+
+.docs-section strong {
+  color: var(--site-text);
+  font-weight: 600;
+}
+
+.docs-content code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--site-code-bg);
+  color: var(--site-text);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.docs-table {
+  width: 100%;
+  margin: 18px 0 0;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.docs-table th,
+.docs-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--site-border);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.65;
+}
+
+.docs-table th {
+  color: var(--site-text-mute);
+  font-size: 12px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.docs-table td {
+  color: var(--site-text-soft);
+}
+
+.docs-table td strong {
+  color: var(--site-text);
+}
+
+.docs-table th:first-child,
+.docs-table td:first-child {
+  white-space: nowrap;
+}
+
+.docs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-note {
+  margin: 52px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--site-border);
+  color: var(--site-text-mute);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+@media (max-width: 980px) {
+  .docs-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .docs-toc {
+    position: static;
+    max-height: none;
+    padding: 0 0 14px;
+    border-bottom: 1px solid var(--site-border);
+    overflow: visible;
+  }
+  .docs-toc nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .docs-toc a {
+    padding: 5px 9px;
+    border: 1px solid var(--site-border);
+    border-radius: 999px;
+    font-size: 12.5px;
+  }
+  .docs-section h2 {
+    padding-top: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .docs-main {
+    padding-top: 24px;
+  }
+  .docs-content h1 {
+    font-size: 32px;
+  }
+  .docs-lead {
+    font-size: 14.5px;
+  }
+  .docs-section {
+    margin-top: 34px;
+  }
+  .docs-section h2 {
+    font-size: 21px;
+  }
+  .docs-section p,
+  .docs-section ul {
+    font-size: 14px;
+  }
+  .docs-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .docs-table th,
+  .docs-table td {
+    white-space: normal;
+    min-width: 120px;
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "synced": false,
+  "reason": "构建前运行 node backend/scripts/sync-office-build.mjs（需 astorm-office 仓库）；桌面端由 scripts/sync-office.mjs 从 GitHub Release 获取当前平台 kit"
+}

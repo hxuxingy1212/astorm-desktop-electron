@@ -1,0 +1,66 @@
+/*
+ * 全应用卡片统一:对齐设置页「记忆卡片」的样式语言
+ * ---------------------------------------------------------------
+ * 配方:无边框 + 灰色填充底(--fill-1)+ 圆角 12px,不使用投影。
+ * 灰底由文字色混合而来(color-mix),明暗主题自动跟随,无需各写一套;
+ * 悬浮加深一档(--fill-2),与记忆卡片的悬浮反馈一致。
+ *
+ * 说明:
+ * - 浮层类(命令面板 / 悬浮卡 / 气泡 / 右键菜单)不在此列,仍靠投影 + 毛玻璃区分层次。
+ * - 选择「行内卡片(如模型行)」保留自身白底,只去边框,避免与灰底卡片糊在一起。
+ */
+
+/* ---------- 1. 标准卡片:去边框 + 灰底 + 圆角 12px ---------- */
+
+.agent-card,
+.skill-card,
+.plugin-card,
+.mcp-server-card,
+.tool-card,
+.config-section,
+.data-card,
+.settings-editor-card,
+.task-card,
+.board-card,
+.history-card,
+.trace-card,
+.usage-card,
+.usage-panel,
+.audit-item,
+.env-list,
+.discovered-item {
+  border: none !important;
+  background-color: var(--fill-1) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 2. 行内卡片:保留自身底色,仅去边框 ---------- */
+
+.model-row {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 3. 悬浮反馈:底色加深一档 ---------- */
+
+.agent-card:hover,
+.skill-card:hover,
+.plugin-card:hover,
+.mcp-server-card:hover,
+.tool-card:hover,
+.data-card:hover,
+.history-card:hover,
+.task-card:hover,
+.board-card:hover,
+.board-card:focus-visible,
+.audit-item:hover {
+  background-color: var(--fill-2) !important;
+}
+
+/* ---------- 4. 选中态:强调色浅底(同记忆卡片 active),不描边 ---------- */
+
+.plugin-card.selected,
+.trace-card.active {
+  background-color: color-mix(in srgb, var(--accent-text) 15%, transparent) !important;
+}

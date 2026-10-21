@@ -1,0 +1,6 @@
+# Cargo 构建环境(macOS:部署目标 ≥ 12 时,Swift 并发库记录为系统绝对路径
+# /usr/lib/swift/libswift_Concurrency.dylib,dyld 可从共享缓存解析;
+# 默认 <12 走 @rpath back-deployment 引用,独立加载时无法解析 → 测试/运行均失败。
+# 其他平台忽略该变量,无副作用。)
+[env]
+MACOSX_DEPLOYMENT_TARGET = "12.0"

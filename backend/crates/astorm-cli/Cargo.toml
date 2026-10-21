@@ -1,0 +1,18 @@
+[package]
+name = "astorm-cli"
+version.workspace = true
+edition.workspace = true
+description = "astorm 无头服务客户端：newtask / tasks / show / stop / pending / approve"
+license.workspace = true
+keywords = ["agent", "cli", "client"]
+categories = ["command-line-utilities", "development-tools"]
+
+[[bin]]
+name = "astorm"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+reqwest = { workspace = true, features = ["blocking", "json"] }
+serde = { workspace = true }
+serde_json = { workspace = true }

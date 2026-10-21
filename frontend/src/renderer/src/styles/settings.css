@@ -1,0 +1,450 @@
+/*
+ * 设置页统一风格(Apple / macOS 观感)
+ * ---------------------------------------------------------------------------
+ * 目标:所有设置页共用同一套控件语言 —— 无边框、填充式、即时反馈。
+ *
+ * 输入类控件(input / textarea / select / input-number / input-tag 等)的无边框样式
+ * 已上移到全局 `styles/inputs.css`(全应用统一,含弹层),此处不再重复。
+ *
+ * 作用域限定在设置页滚动容器 `.settings-scroll` 内,不影响应用其余部分。
+ * 选择器统一以 `#app` 起头:ID 压倒各页 scoped 覆盖里任意数量的类名,
+ * 因而无需逐个页面删除既有覆盖即可稳定统一(配合 !important 双保险)。
+ *
+ * 设计要点(取自 Apple 人机界面):
+ * - 控件「无边框」:靠填充色分层,而不是 1px 描边;悬浮加深、聚焦加柔光环。
+ * - 主要动作 = 强调色实底 + 白字;次要动作 = 中性浅填充;文字动作 = 透明。
+ * - 反馈落在按压瞬间(:active scale),过渡短促(0.1s),不阻塞输入。
+ * - 尊重 prefers-reduced-motion:取消缩放反馈。
+ */
+
+/* =========================================================================
+ * 1. 按钮:全部无边框
+ *    主要 = 强调色实底;次要 = 中性浅填充;文字 = 透明;按压即时缩放。
+ * ========================================================================= */
+
+/* 设置页字体刻度统一：页面标题 20px，行标题 15px，说明 14px。
+   以共享样式兜住各设置页，避免每个页面保留一套略有差异的字号/行高。 */
+#app .settings-scroll .page-title,
+#app .settings-scroll .model-page-title,
+#app .settings-scroll .usage-title {
+  font-size: var(--font-size-xl) !important;
+  line-height: var(--line-height-tight) !important;
+  font-weight: var(--font-weight-semibold) !important;
+}
+
+/* h2 自带上下 margin（约 23px），会把标题与顶部/分区间距撑大一倍 */
+#app .settings-scroll .page-title {
+  margin: 0 !important;
+}
+
+#app .settings-scroll .section-title {
+  font-size: var(--font-size-md) !important;
+  line-height: var(--line-height-ui) !important;
+  letter-spacing: 0 !important;
+}
+
+#app .settings-scroll .row-title {
+  font-size: var(--font-size-title) !important;
+  line-height: var(--line-height-ui) !important;
+}
+
+#app .settings-scroll .row-desc {
+  font-size: var(--font-size-md) !important;
+  line-height: var(--line-height-ui) !important;
+}
+
+#app .settings-scroll .arco-btn {
+  border: none !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform 0.1s ease !important;
+}
+
+/* 按压反馈:落在按下那一刻,短促不拖沓 */
+#app .settings-scroll .arco-btn:not(.arco-btn-disabled):active {
+  transform: scale(0.97);
+}
+
+/* 次要 / 默认按钮:中性浅填充 + 常规文字色。
+   用 :where() 包裹 :not()(特异度为 0),避免盖过下方语义色按钮(status-danger 等)。 */
+#app .settings-scroll .arco-btn:where(:not(.arco-btn-primary)):where(:not(.arco-btn-text)) {
+  background-color: var(--fill-1) !important;
+  color: var(--text-primary) !important;
+}
+
+#app .settings-scroll .arco-btn:where(:not(.arco-btn-primary)):where(:not(.arco-btn-text)):hover {
+  background-color: var(--fill-2) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 主要按钮:强调色实底(统一各页此前不一致的灰/蓝两套) */
+#app .settings-scroll .arco-btn-primary,
+#app .settings-scroll .arco-btn-primary:focus-visible {
+  background-color: var(--accent-text) !important;
+  color: #fff !important;
+}
+
+#app .settings-scroll .arco-btn-primary:hover {
+  background-color: color-mix(in srgb, var(--accent-text) 88%, #000) !important;
+}
+
+/* 文字按钮:透明底,悬浮浅填充 */
+#app .settings-scroll .arco-btn-text {
+  background-color: transparent !important;
+  color: var(--text-secondary) !important;
+}
+
+#app .settings-scroll .arco-btn-text:hover {
+  background-color: var(--fill-1) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 危险动作:保持语义色,但同样无边框 */
+#app .settings-scroll .arco-btn-status-danger:not(.arco-btn-primary) {
+  background-color: color-mix(in srgb, var(--danger) 12%, transparent) !important;
+  color: var(--danger) !important;
+}
+
+#app .settings-scroll .arco-btn-status-danger:not(.arco-btn-primary):hover {
+  background-color: color-mix(in srgb, var(--danger) 20%, transparent) !important;
+}
+
+/* 禁用按钮:保留填充、弱化文字 */
+#app .settings-scroll .arco-btn-disabled {
+  background-color: var(--fill-1) !important;
+  color: var(--text-disabled) !important;
+  opacity: 1 !important;
+}
+
+/* 按钮内图标:与文字垂直居中对齐 */
+#app .settings-scroll .arco-btn-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* =========================================================================
+ * 2. 开关:统一为 macOS 绿色滑块
+ * ========================================================================= */
+
+#app .settings-scroll .arco-switch {
+  border-radius: 999px !important;
+}
+
+#app .settings-scroll .arco-switch-checked {
+  background-color: var(--accent-text) !important;
+}
+
+#app .settings-scroll .arco-switch .arco-switch-handle {
+  background-color: #fff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================================================
+ * 3. 页脚:不画分隔线;长页面滚动时按钮常驻底部
+ *    分组页（`.setting-group`）整页滚动，页脚 sticky 到滚动容器底部；
+ *    其余页面的滚动在 `.page-body` 内，页脚本来就是 flex 底部固定。
+ * ========================================================================= */
+
+#app .settings-scroll .page:has(.setting-group) > .page-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-top: 24px;
+  padding: 12px 0 16px;
+  background: var(--bg-base);
+}
+
+/* =========================================================================
+ * 4. 无障碍:减少动态效果时取消缩放反馈
+ * ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  #app .settings-scroll .arco-btn:not(.arco-btn-disabled):active {
+    transform: none;
+  }
+}
+
+/* 常展开分组：标题在边框外左上角，内容共用一个圆角容器。 */
+#app .settings-scroll .setting-group + .setting-group {
+  margin-top: 24px;
+}
+#app .settings-scroll .setting-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-ui);
+}
+#app .settings-scroll .setting-group-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  background: var(--surface-bg);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-xl);
+}
+#app .settings-scroll .setting-group-content > * {
+  min-width: 0;
+  padding: 12px 0;
+}
+#app .settings-scroll .setting-group-content > * + * {
+  border-top: 1px solid var(--border-light);
+}
+#app .settings-scroll .setting-group-content .settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 56px;
+}
+#app .settings-scroll .row-text {
+  min-width: 0;
+}
+#app .settings-scroll .row-desc {
+  line-height: var(--line-height-body) !important;
+}
+#app .settings-scroll .page:has(.setting-group) {
+  width: 100%;
+  max-width: 832px;
+  margin: 0 auto;
+  padding: 24px 40px 0;
+  height: auto;
+  min-height: 100%;
+}
+#app .settings-scroll .page:has(.setting-group) > .page-body {
+  overflow: visible;
+  padding: 0;
+  flex: none;
+}
+#app .settings-scroll .page:has(.setting-group) > .page-header {
+  margin-bottom: 20px;
+}
+#app .settings-scroll .page:has(.setting-group) .page-title {
+  font-size: var(--font-size-2xl) !important;
+}
+@media (max-width: 900px) {
+  #app .settings-scroll .page:has(.setting-group) {
+    padding: 20px 16px 0;
+  }
+  #app .settings-scroll .setting-group-content .settings-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+#app .settings-scroll :is(.tool-header, .mcp-server-header, .env-card-head) {
+  cursor: default;
+}
+#app .settings-scroll :is(.tool-header, .mcp-server-header, .env-card-head):hover {
+  background: transparent;
+}
+
+/* 邮箱 / 模型共用的「列表 + 配置表单」配方。 */
+#app .settings-scroll .settings-editor-page {
+  container: settings-editor / inline-size;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+  padding: 28px 40px 24px;
+}
+.settings-editor-heading {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto 20px;
+}
+.settings-editor-title {
+  margin: 0 0 6px;
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+.settings-editor-desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+}
+.settings-editor-card {
+  display: flex;
+  width: 100%;
+  max-width: 1080px;
+  min-height: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.settings-editor-sidebar {
+  display: flex;
+  flex: 0 0 220px;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px;
+  border-right: 1px solid var(--border-base);
+}
+.settings-editor-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+}
+.settings-editor-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.settings-editor-item:hover,
+.settings-editor-add:hover,
+.settings-editor-add-active {
+  background: var(--fill-1);
+}
+.settings-editor-item-active,
+.settings-editor-item-active:hover {
+  background: var(--fill-3);
+}
+.settings-editor-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+.settings-editor-name {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.settings-editor-tag {
+  flex: none;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-2xs);
+}
+.settings-editor-dot,
+.model-status-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 15%, transparent);
+}
+.settings-editor-add {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 34px;
+  margin-top: 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.settings-editor-item:focus-visible,
+.settings-editor-add:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+.settings-editor-detail {
+  container: settings-editor-form / inline-size;
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+}
+.settings-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.settings-editor-label {
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+.settings-editor-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.settings-editor-fields,
+.settings-editor-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+}
+.settings-editor-fields { gap: 14px; }
+.settings-editor-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+.settings-editor-required { color: var(--danger); }
+.settings-editor-detail .settings-section + .settings-section { margin-top: 28px; }
+#app .settings-scroll .settings-editor-page :is(.arco-input, .arco-select-view, .arco-select-view-value, .arco-select-view-placeholder, .arco-btn) {
+  font-size: var(--font-size-sm);
+}
+@container settings-editor (max-width: 600px) {
+  .settings-editor-card { flex-direction: column; }
+  .settings-editor-sidebar {
+    flex-basis: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-base);
+  }
+  .settings-editor-detail { padding: 16px; }
+}
+@container settings-editor-form (max-width: 460px) {
+  .settings-editor-header { flex-wrap: wrap; }
+}
+@media (max-width: 900px) {
+  #app .settings-scroll .settings-editor-page { padding: 24px 16px; }
+}
+
+/* 本地配置文件入口：长路径换行，按钮保持可用。 */
+.settings-config-path {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-code);
+  line-height: var(--line-height-body);
+}
+.settings-config-file > .config-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}

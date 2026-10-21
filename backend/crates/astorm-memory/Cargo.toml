@@ -1,0 +1,44 @@
+[package]
+name = "astorm-memory"
+version.workspace = true
+edition.workspace = true
+description = "OKF 长期记忆编译管道：JSONL 会话 → OKF v0.2 知识库 Bundle（lib + okf-agent CLI）"
+license.workspace = true
+keywords = ["okf", "memory", "wiki", "llm", "knowledge"]
+categories = ["development-tools"]
+
+[lib]
+crate-type = ["rlib"]
+
+# CLI：同一套管道以命令行方式使用（独立于 Electron 应用）
+[[bin]]
+name = "okf-agent"
+path = "src/bin/okf_agent.rs"
+
+[dependencies]
+# LLM 客户端（OpenAI 兼容 SSE 流式；结构化 JSON 输出的成对约定复用其 ClientOption）
+llm-provider = { path = "../llm-provider" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+sha2 = "0.10"
+chrono = { workspace = true }
+async-trait.workspace = true
+futures = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+# 概念候选检索（BM25 + jieba 中文分词；与 skill 索引同款）
+tantivy = { workspace = true }
+tantivy-jieba = { workspace = true }
+# CLI 子命令解析
+clap = { workspace = true }
+dirs = { workspace = true }
+anyhow = "1"
+dotenvy = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }

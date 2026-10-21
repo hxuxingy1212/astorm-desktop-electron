@@ -1,0 +1,37 @@
+[package]
+name = "astorm-sandbox"
+version.workspace = true
+edition.workspace = true
+description = "Rust 跨平台（Windows + macOS）Shell 执行安全沙箱：文件/网络/危险命令防护 + 内置运行时"
+license.workspace = true
+keywords = ["sandbox", "shell", "security", "sandbox-exec", "appcontainer"]
+categories = ["command-line-utilities", "development-tools"]
+
+[lib]
+name = "astorm_sandbox"
+path = "src/lib.rs"
+
+[[bin]]
+name = "sbox"
+path = "src/main.rs"
+test = false
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+globset = { workspace = true }
+regex = { workspace = true }
+
+clap = { workspace = true }
+os_pipe = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+# 原生 DACL 授权/撤销（SetNamedSecurityInfoW），替代逐路径 icacls
+windows = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Security_Authorization",
+] }

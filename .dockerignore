@@ -1,0 +1,18 @@
+# Docker 构建上下文排除（context = 仓库根）
+node_modules
+**/node_modules
+backend/target
+frontend/out
+frontend/release
+dist
+.git
+.env
+backend/.env
+*.log
+docs
+# 平台产物：Web 构建只需 JS viewer；Windows DLL / 各平台二进制不进上下文
+frontend/resources/office/bin
+frontend/resources/office/skill
+frontend/resources/agent-browser
+frontend/resources/bin
+frontend/resources/astorm-backend.node

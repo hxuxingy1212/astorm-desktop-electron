@@ -1,0 +1,159 @@
+/*
+ * 输入控件统一风格(全应用,Apple 观感)
+ * ---------------------------------------------------------------------------
+ * 目标:所有 Arco 输入类控件(a-input / a-textarea / a-select / a-input-number /
+ * a-input-search / a-input-tag)统一为**无边框填充**——靠填充色分层而不是 1px 描边;
+ * 悬浮加深,聚焦换成白底 + 强调色柔光环,校验错误用危险色柔光环。
+ *
+ * 选择器**不带 #app 前缀**:a-modal / a-drawer / 下拉弹层默认 teleport 到 body
+ * (#app 之外),#app 锚定会漏掉弹层;裸类选择器 + !important 稳定压过各处的
+ * scoped 覆盖(与 settings.css 同一套语言,元素挂哪都成立)。
+ */
+
+/* =========================================================================
+ * 1. 外层容器:统一无边框填充块
+ * ========================================================================= */
+
+.arco-input-wrapper,
+.arco-input-outer,
+.arco-textarea-wrapper,
+.arco-select-view,
+.arco-input-number,
+.arco-input-tag {
+  background-color: var(--fill-1) !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast) !important;
+}
+
+/* 搜索框外层不再画边框(覆盖 global.css 的可见描边) */
+.arco-input-search {
+  border: none !important;
+}
+
+/* 悬浮:填充加深 */
+.arco-input-wrapper:hover,
+.arco-input-outer:hover,
+.arco-textarea-wrapper:hover,
+.arco-select-view:not(.arco-select-view-disabled):hover,
+.arco-input-number:not(.arco-input-number-disabled):hover,
+.arco-input-tag:not(.arco-input-tag-disabled):hover {
+  background-color: var(--fill-2) !important;
+}
+
+/* 聚焦:白底 + 柔和强调光环(不靠描边,靠光;input-tag 用独立类名 + focus-within 双兜) */
+.arco-input-wrapper.arco-input-focus,
+.arco-input-outer:focus-within,
+.arco-textarea-wrapper:focus-within,
+.arco-select-view-focus,
+.arco-input-number:focus-within,
+.arco-input-tag.arco-input-tag-focused,
+.arco-input-tag:focus-within {
+  background-color: var(--bg-base) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-text) 22%, transparent) !important;
+}
+
+/* =========================================================================
+ * 2. 裸控件:内层 input / textarea / number 自身的边框与底色清零,
+ *    只留外层的填充块;数字步进按钮做成无边框图标钮。
+ * ========================================================================= */
+
+.arco-input,
+.arco-textarea,
+.arco-input-number-input {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.arco-input-number-step,
+.arco-input-number-step-button {
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.arco-input-number-step-button:hover {
+  background-color: var(--fill-2) !important;
+}
+
+/* =========================================================================
+ * 3. 状态:禁用维持填充弱化文字;校验错误用危险色柔光环(与聚焦同一套语言)
+ * ========================================================================= */
+
+.arco-input-wrapper.arco-input-disabled,
+.arco-textarea-wrapper.arco-textarea-disabled,
+.arco-select-view-disabled,
+.arco-input-number-disabled,
+.arco-input-tag.arco-input-tag-disabled {
+  background-color: var(--fill-1) !important;
+  border: 1px solid transparent !important;
+}
+
+.arco-input-wrapper.arco-input-error,
+.arco-select-view-error {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 20%, transparent) !important;
+}
+
+/* =========================================================================
+ * 4. 例外:聊天输入条 footer 的「模式」选择芯片保持自绘透明底 ——
+ *    它是白色胶囊上的图标芯片(有自己的底色语言),不做灰色填充块。
+ * ========================================================================= */
+
+#app .chat-input-pill .arco-select-view {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* =========================================================================
+ * 5. 多行文档输入：约定 / 智能体指引 / 技能指令 / 定时任务指令
+ *    与普通输入框不同：保留 1px 描边、加大内边距与最小高度，
+ *    右下角保留原生纵向缩放柄（可继续拉高书写区）。
+ * ========================================================================= */
+
+.multiline-text-field.arco-textarea-wrapper {
+  background-color: var(--fill-1) !important;
+  border: 1px solid var(--border-base) !important;
+  border-radius: 10px !important;
+  padding: 0;
+}
+
+.multiline-text-field.arco-textarea-wrapper:hover {
+  background-color: var(--fill-2) !important;
+  border-color: var(--border-base) !important;
+}
+
+.multiline-text-field.arco-textarea-wrapper:focus-within {
+  background-color: var(--fill-1) !important;
+  border-color: var(--accent-text) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-text) 18%, transparent) !important;
+}
+
+.multiline-text-field .arco-textarea {
+  height: auto;
+  min-height: var(--multiline-min-height, 200px);
+  padding: 12px 14px;
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.multiline-text-field .arco-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* 弹性容器内撑满剩余高度（定时任务右栏这类布局） */
+.multiline-text-field.is-fill {
+  height: 100%;
+}
+
+.multiline-text-field.is-fill .arco-textarea {
+  height: 100%;
+  min-height: 0;
+}

@@ -1,0 +1,39 @@
+{
+  "id": "demo",
+  "name": "示例插件",
+  "version": "0.1.0",
+  "description": "展示插件系统全部能力的官方演示插件：配置回显、LLM 单次补全、聊天联动、应用↔插件消息。",
+  "entry": "./index.html",
+  "icon": "./icon.svg",
+  "permissions": ["llm", "chat"],
+  "sdkVersion": "1",
+  "configSchema": [
+    {
+      "key": "greeting",
+      "label": "问候语",
+      "type": "text",
+      "required": false,
+      "default": "你好，我是示例插件 👋",
+      "placeholder": "显示在插件页头部，可在设置→插件里修改"
+    },
+    {
+      "key": "apiBase",
+      "label": "示例 API 地址（secret 加密存储）",
+      "type": "secret",
+      "required": false,
+      "default": "",
+      "placeholder": "https://api.example.com",
+      "description": "secret 类型字段由应用 safeStorage 加密保存，不落明文"
+    },
+    {
+      "key": "color",
+      "label": "主题色",
+      "type": "select",
+      "default": "blue",
+      "options": [
+        { "label": "蓝色", "value": "blue" },
+        { "label": "绿色", "value": "green" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN" data-site-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Astorm 平台能力说明：运行形态、对话与任务、工具执行、工作区预览、知识记忆、自动化、模型扩展、安全审计与部署。" />
+    <title>平台能力 · Astorm</title>
+  </head>
+  <body>
+    <div class="site-glow" aria-hidden="true"></div>
+
+    <header class="site-nav">
+      <div class="container nav-inner">
+        <a class="brand" href="./" aria-label="返回 Astorm 首页">
+          <span class="brand-mark"><img data-logo alt="" /></span>
+          <span class="brand-name">Astorm</span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+          <a href="./">预览</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="gh-address" id="github-link" href="https://github.com/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z" />
+            </svg>
+            <span id="github-address">github.com/</span>
+          </a>
+          <a class="btn btn-primary btn-sm" id="download-link" href="https://github.com/" target="_blank" rel="noreferrer">下载</a>
+          <button class="icon-btn" id="site-theme" type="button" aria-label="切换明暗主题">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2.8v2.1M12 19.1v2.1M2.8 12h2.1M19.1 12h2.1M5.5 5.5l1.5 1.5M17 17l1.5 1.5M18.5 5.5L17 7M7 17l-1.5 1.5" stroke-linecap="round" />
+            </svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M20 14.3A8.5 8.5 0 0 1 9.7 4a8.5 8.5 0 1 0 10.3 10.3Z" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="docs-main">
+      <div class="container docs-layout">
+        <aside class="docs-toc">
+          <div class="docs-toc-title">平台能力</div>
+          <nav aria-label="文档目录">
+            <a href="#overview">概览</a>
+            <a href="#modes">三种运行形态</a>
+            <a href="#chat">对话与任务</a>
+            <a href="#tools">工具与执行</a>
+            <a href="#workspace">工作区与预览</a>
+            <a href="#knowledge">知识与交付</a>
+            <a href="#automation">自动化与协作</a>
+            <a href="#models">模型与扩展</a>
+            <a href="#security">安全与审计</a>
+            <a href="#data">数据与部署</a>
+            <a href="#platform">平台支持</a>
+          </nav>
+        </aside>
+
+        <article class="docs-content">
+          <h1>平台能力</h1>
+          <p class="docs-lead">
+            Astorm 是一个本地优先的桌面智能体平台。它不只是聊天：能读写文件、运行命令、操作 Git、查资料、
+            做 Office 文档，并把每一步过程留在可审查的会话里。
+          </p>
+
+          <section id="overview" class="docs-section">
+            <h2>概览</h2>
+            <p>
+              同一套 Rust 内核与 Vue 渲染层，可以在桌面客户端、本地 CLI、单用户云容器三种宿主中运行。
+              业务逻辑、工具协议、会话记录与数据格式不分叉；差别只在“入口”和“执行宿主”。
+            </p>
+            <ul>
+              <li><strong>过程透明</strong>：思考、工具调用、参数、结果、耗时与用量都进入对话过程收纳块，可展开查看。</li>
+              <li><strong>副作用可控</strong>：计划 / 执行 / 自动三种会话模式，配合手动授权 / 自动授权与审批卡。</li>
+              <li><strong>数据本地</strong>：会话、工作区、记忆与知识库默认落在本机；模型密钥经系统安全存储加密。</li>
+              <li><strong>模型可换</strong>：OpenAI、Anthropic、DeepSeek 或任意兼容端点，按供应商与模型配置。</li>
+            </ul>
+          </section>
+
+          <section id="modes" class="docs-section">
+            <h2>三种运行形态</h2>
+            <table class="docs-table">
+              <thead>
+                <tr><th>形态</th><th>入口</th><th>执行与数据</th><th>适合</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>桌面客户端</strong></td>
+                  <td>Electron 原生窗口</td>
+                  <td>本机文件、终端、浏览器与 Office；数据留在本机</td>
+                  <td>日常主力、需要完整桌面能力</td>
+                </tr>
+                <tr>
+                  <td><strong>本地 CLI</strong></td>
+                  <td><code>astorm</code> 命令</td>
+                  <td>同一内核，无窗口运行；审批与状态可脚本化</td>
+                  <td>CI、定时任务、自动化脚本</td>
+                </tr>
+                <tr>
+                  <td><strong>云容器</strong></td>
+                  <td>浏览器 Web UI / HTTP API / CLI</td>
+                  <td>单用户容器 + 数据卷；任务常驻，多设备接入</td>
+                  <td>远程办公、跨设备、长时间任务</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              桌面端通过 napi 在进程内直连内核；Web 端通过同形的 <code>window.api</code> 契约走 REST + WebSocket。
+              渲染层与工具行为保持一致，桌面独有的系统能力在 Web 端按能力矩阵降级。
+            </p>
+          </section>
+
+          <section id="chat" class="docs-section">
+            <h2>对话与任务</h2>
+            <h3>流式与过程</h3>
+            <ul>
+              <li>流式正文、思考链、工具步骤；过程默认收起，一轮结束显示总耗时，点开可看完整轨迹。</li>
+              <li>工具行展示类型、调用摘要、参数与结果；写文件显示增删行数与 diff，命令显示退出状态与输出。</li>
+              <li>每轮结束展示交付物、变更文件、相关网页来源与相关记忆。</li>
+            </ul>
+            <h3>模式与审批</h3>
+            <ul>
+              <li><strong>计划</strong>只读分析与规划；<strong>执行</strong>按审批策略动手；<strong>自动</strong>在安全规则内自动放行。</li>
+              <li>审批卡展示分类、来源、目标路径或命令；支持一次性授权与本会话授权。</li>
+              <li>提问表单、邮件发送确认、工具失败与用户打断都有独立状态，不靠正文猜测。</li>
+            </ul>
+            <h3>会话操作</h3>
+            <ul>
+              <li>消息队列、立即发送、停止生成；撤回、派生新会话、摘要压缩、加载更早。</li>
+              <li><code>/plan</code> 计划模式、<code>/goal</code> 目标循环；目标可修改、暂停或结束。</li>
+              <li>子会话与多智能体并行：一次委派可并发多个子任务，入口收在会话右上角。</li>
+            </ul>
+            <h3>引用与附件</h3>
+            <ul>
+              <li>正文文件引用（<code>auth.rs:47</code>）可点击打开文件页签并定位到行；网页引用以编号角标打开内置浏览器。</li>
+              <li>支持图片、任意文件、网页元素、Office 元素与对话引用；发送时随消息作为结构化元数据下发。</li>
+            </ul>
+          </section>
+
+          <section id="tools" class="docs-section">
+            <h2>工具与执行</h2>
+            <ul>
+              <li><strong>文件</strong>：读取、写入、编辑、追加、列目录、glob、grep；返回行数、字符数与 diff。</li>
+              <li><strong>命令</strong>：bash / PTY；支持超时、输出截断、沙箱事实标注（无防护、被驱逐、被截断）。</li>
+              <li><strong>Git</strong>：状态、差异、分支、提交历史与图谱；工作区分支在顶栏实时展示。</li>
+              <li><strong>检索</strong>：网页搜索、网页抓取、GitHub、arXiv、会话历史。</li>
+              <li><strong>浏览器</strong>：打开页签、导航、点击、输入、读取页面；与用户共享同一个页面。</li>
+              <li><strong>Office</strong>：Word / Excel / PPT / PDF 的生成、读取、编辑、渲染与格式转换。</li>
+              <li><strong>邮件</strong>：多账号 IMAP/SMTP，列表、正文、附件、标记与发送；发送前必须确认。</li>
+              <li><strong>记忆</strong>：概念检索与每轮注入；<strong>技能 / 智能体</strong>：按会话挂载与委派；<strong>MCP</strong>：远程工具接入。</li>
+            </ul>
+            <p>
+              工具按会话与智能体授权，部分工具按需加载。所有写操作、网络访问与危险命令都先经过静态预检与审批策略，
+              再进入系统级沙箱执行。
+            </p>
+          </section>
+
+          <section id="workspace" class="docs-section">
+            <h2>工作区与预览</h2>
+            <ul>
+              <li><strong>文件树</strong>：按会话工作区浏览、搜索、展开；文件预览支持语法高亮、行号与 markdown 渲染。</li>
+              <li><strong>代码审查</strong>：按 git 变更列出文件与 diff，支持逐行查看和跳转。</li>
+              <li><strong>终端</strong>：交互式 PTY；切换页签不断连，关闭页签才断开。</li>
+              <li><strong>浏览器页签</strong>：桌面用 iframe + CDP，Web 用服务端 Chromium 画面流；支持元素拾取、截图与录像（桌面）。</li>
+              <li><strong>Office 预览</strong>：docx / xlsx / pptx / pdf 高保真渲染；可悬浮元素路径回填输入框。</li>
+              <li><strong>多页签与分栏</strong>：文件、终端、浏览器、Office、审查、会话轨迹并列；宽度两档、可拖拽、可最大化。</li>
+            </ul>
+          </section>
+
+          <section id="knowledge" class="docs-section">
+            <h2>知识与交付</h2>
+            <ul>
+              <li><strong>交付物</strong>：跨会话汇总生成的产物，按今天 / 昨天 / 近一周 / 近一月筛选，按会话与轮次两级折叠；支持打开与审查。</li>
+              <li><strong>资料库</strong>：文件树、文件夹、颜色、标签、导入、搜索、预览、重命名与删除。</li>
+              <li><strong>长期记忆</strong>：原始资料 → OKF 概念编译 → 概念卡片与检索；每轮按相关度注入，不等同于普通文件库。</li>
+            </ul>
+            <p>交付物是“这轮工作产出了什么”，资料库是“你交给它的资料”，记忆是“它沉淀下来的概念”。三者分开管理。</p>
+          </section>
+
+          <section id="automation" class="docs-section">
+            <h2>自动化与协作</h2>
+            <ul>
+              <li><strong>定时任务</strong>：每天 / 每周 / 工作日 / 自定义 cron；每次新建会话或持续复用同一会话；可启停、立即运行、查看执行记录。</li>
+              <li><strong>任务看板</strong>：待办 / 进行中 / 待处理 / 已完成；新建待办、启动、修改状态。</li>
+              <li><strong>邮件代理</strong>：多账号收件箱、文件夹计数、未读与标记；写邮件、附件、发送确认卡。</li>
+              <li><strong>目标与计划</strong>：目标循环自动推进；任务规划支持步骤状态与详细说明。</li>
+            </ul>
+          </section>
+
+          <section id="models" class="docs-section">
+            <h2>模型与扩展</h2>
+            <ul>
+              <li><strong>供应商</strong>：支持 Chat Completions、Responses、Anthropic Messages 三种协议；自定义 Base URL 与 API Key。</li>
+              <li><strong>模型</strong>：同一供应商下可配置多个模型；可检测文本与图片识别能力；列表第一项为默认。</li>
+              <li><strong>会话级设置</strong>：模式、权限、思考强度、供应商与模型按会话保存，改动即时生效。</li>
+              <li><strong>技能</strong>：内置 office 技能，用户技能可导入 / 启用；对话中可用 <code>$</code> 引用。</li>
+              <li><strong>智能体</strong>：内置主智能体、General、Explore，以及自定义智能体；可配置工具集、技能集、模式与权限。</li>
+              <li><strong>MCP</strong>：stdio 与 HTTP 连接器，工具并入当前会话；远程 401 支持 OAuth 或手动 Token。</li>
+              <li><strong>插件</strong>：桌面端可安装、配置与打开插件页；Web 端不提供安装入口。</li>
+            </ul>
+          </section>
+
+          <section id="security" class="docs-section">
+            <h2>安全与审计</h2>
+            <ul>
+              <li><strong>两套正交维度</strong>：会话模式（计划 / 执行 / 自动）× 权限模式（手动 / 自动）；硬规则始终优先于自动放行。</li>
+              <li><strong>审批信息</strong>：分类、来源、目标路径、命令与原因；支持一次性或本会话授权。</li>
+              <li><strong>沙箱</strong>：系统级隔离（macOS Seatbelt、Windows AppContainer 等）；运行结果标注无防护、被驱逐、超时或输出截断。</li>
+              <li><strong>凭据</strong>：模型密钥经 Electron safeStorage 加密；云容器依赖数据卷权限边界；远程 MCP 使用连接器凭据。</li>
+              <li><strong>审计与用量</strong>：工具调用、审批与拒绝进入审计日志；按会话与时间统计 token 用量。</li>
+            </ul>
+          </section>
+
+          <section id="data" class="docs-section">
+            <h2>数据与部署</h2>
+            <ul>
+              <li><strong>系统目录</strong>：<code>config/</code>、<code>data/</code>、<code>log/</code>、<code>plugins/</code>、<code>skills/</code>、<code>electron/</code>。</li>
+              <li><strong>用户目录</strong>：<code>workspace/</code> 任务工作区、<code>knowledge/</code> 资料库、<code>memory/</code> 长期记忆。</li>
+              <li><strong>存储</strong>：SQLite 元数据 + 每会话 <code>message.jsonl</code>；交付物、定时任务、用量与审计各有表。</li>
+              <li><strong>云容器</strong>：单用户实例 + 持久化数据卷；Web UI、HTTP API 与 CLI 同源；模型供应商在 Web 设置中配置。</li>
+              <li><strong>CLI</strong>：<code>astorm newtask / tasks / show / stop / pending / approve / status</code>，适合脚本与 CI。</li>
+            </ul>
+          </section>
+
+          <section id="platform" class="docs-section">
+            <h2>平台支持</h2>
+            <ul>
+              <li><strong>桌面</strong>：macOS、Windows、Linux；原生窗口、系统对话框、本机文件管理器、Chrome Cookie 导入。</li>
+              <li><strong>Web</strong>：浏览器访问云容器；服务端浏览器画面流、文件上传 staging、服务端目录选择器。</li>
+              <li><strong>桌面独有</strong>：元素拾取、截图 / 录像、插件安装与插件站点、部分系统级集成。</li>
+              <li><strong>Web 降级</strong>：无本机文件管理器、无 Chrome Cookie 导入、远程 MCP 的 OAuth 回环受限（可用手动 Token）。</li>
+              <li><strong>Office</strong>：预览依赖随包分发的 office 套件；缺失时回退旧渲染器或外部打开。</li>
+            </ul>
+          </section>
+
+          <p class="docs-note">
+            本页按当前仓库实现整理，作为平台能力速览；具体协议、部署参数与边界以仓库 <code>docs/</code> 下的文档为准。
+          </p>
+        </article>
+      </div>
+    </main>
+
+    <script type="module" src="./docs-main.ts"></script>
+  </body>
+</html>

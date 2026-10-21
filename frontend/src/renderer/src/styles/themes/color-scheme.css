@@ -1,0 +1,69 @@
+/*
+ * 设计 Token(暗色):随 html[data-theme='dark'] 生效(见 theme/index.ts)。
+ * 主色仍引用 Arco 变量,明暗通用。
+ */
+[data-theme='dark'] {
+  --surface-bg: var(--fill-1);
+  --hover-card-bg: #343434;
+  --hover-card-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  /* 侧栏固定实色（窗口模式玻璃层的等效色；避免全屏动画透出桌面导致变色） */
+  --sidebar-solid-bg: #2e2e2e;
+
+  /* 画布对齐参考实现自报值（其外观设置页可见）+ 截图实测 #181818（此前 #141414 偏暗一档） */
+  --bg-base: #181818;
+  --bg-1: #262626;
+  --bg-2: #2e2e2e;
+  --bg-3: #3b3b3b;
+  --bg-4: #4a4a4a;
+  --bg-5: #6b6b6b;
+
+  --text-primary: #cdcdcd;
+  --text-secondary: #b4b4b4;
+  --text-tertiary: #8a8a8a;
+  --text-disabled: #4e5969;
+  /* 顶栏会话标题：深色下用更亮的灰，拉开层级 */
+  --text-title: #ededed;
+  /* 会话正文：与主文字同档（深色下不再额外压暗） */
+  --text-body: #cdcdcd;
+
+  --border-base: #3b3b3b;
+  --border-light: #2e2e2e;
+  --border-strong: #4a4a4a;
+
+  --bg-hover: #2e2e2e;
+  --bg-active: #3b3b3b;
+
+  /* 右侧面板:与画布同底 #181818（此前纯黑 #000000；参考实现的正文/面板区实测同为 #181818，
+     面板靠 --panel-border 与侧栏分隔）。分区边框与侧栏 sider-divider 同色(--border-base) */
+  --panel-bg: #181818;
+  --panel-border: #3b3b3b;
+
+  /* 强调文字色:暗色下取较亮的 5 档主色(arcoblue-5 暗色 #306fff),保证深底可读对比 */
+  --accent-text: #306fff;
+  /* 链接 / 文件引用文字：深底上用柔和浅蓝，避免强调色过饱和 */
+  --link-text: #a0c7f4;
+
+  /* 文件图标品牌色(暗色:提亮一档保证可读;与 base.css 同名变量对) */
+  --ficon-folder: #e8b64c;
+  --ficon-code: #4b9af1;
+  --ficon-data: #d4a017;
+  --ficon-doc: #3db8b6;
+  --ficon-config: #d97706;
+  --ficon-shell: #34d399;
+  --ficon-media: #f472b6;
+  --ficon-archive: #fb923c;
+  --ficon-sheet: #2dd4bf;
+  --ficon-deck: #f59e0b;
+  --ficon-db: #a78bfa;
+  --ficon-lock: #94a3b8;
+  --ficon-build: #c084fc;
+}
+
+/* Arco 组件文字色在暗色下对齐 Arco 暗色刻度(覆盖 arco.css 的 body[arco-theme='dark'] 默认值;
+   同选择器同特异度,本项目样式后加载生效) */
+body[arco-theme='dark'] {
+  --color-text-1: var(--text-primary);
+  --color-text-2: var(--text-secondary);
+  --color-text-3: var(--text-tertiary);
+  --color-text-4: var(--text-disabled);
+}

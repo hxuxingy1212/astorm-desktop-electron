@@ -1,0 +1,6 @@
+/target
+/.idea
+/.zcode
+/.env
+/logs
+*.node

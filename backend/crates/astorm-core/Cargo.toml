@@ -1,0 +1,86 @@
+[package]
+name = "astorm-core"
+version.workspace = true
+edition.workspace = true
+description = "ReAct 大模型推理循环框架：LLM 推理与工具执行的多轮循环引擎 + Electron 后端服务应用框架"
+license.workspace = true
+keywords = ["llm", "react", "agent", "electron", "framework"]
+categories = ["asynchronous", "development-tools"]
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+astorm-common = { path = "../astorm-common" }
+# 长期记忆编译管道（OKF v0.2 Bundle；独立 crate，core 仅做「应用设定 → 记忆库」的集成适配）
+astorm-memory = { path = "../astorm-memory" }
+# 邮件服务（多账号 IMAP/SMTP + 本地缓存；mail 工具经 core 门面访问）
+astorm-mail = { path = "../astorm-mail" }
+async-trait.workspace = true
+chrono = { workspace = true }
+dirs = { workspace = true }
+futures = { workspace = true }
+llm-provider = { path = "../llm-provider" }
+react-loop = { path = "../react-loop" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-subscriber = { workspace = true }
+tokio = { version = "1.53.1", features = ["process", "time", "net"] }
+tokio-util = "0.7.19"
+uuid = { workspace = true }
+# 终端 PTY(Windows ConPTY / 跨平台):交互式 shell 会话(终端页签 xterm.js)
+portable-pty = { workspace = true }
+
+# 本机浏览器数据导入（browser/：Chrome Profile 定位 + Cookie 库读取 + 解密）
+# rusqlite 与 astorm-storage 同版本同 feature，构建时复用同一份 bundled sqlite
+rusqlite = { version = "0.40", features = ["bundled"] }
+sha2 = "0.10"
+
+# 工具集（file_operation / bash / 搜索 / 交互 / 文档解析 / 图片读取）
+base64 = { workspace = true }
+globset = { workspace = true }
+ignore = { workspace = true }
+regex = { workspace = true }
+reqwest = { workspace = true }
+scraper = { workspace = true }
+quick-xml = { workspace = true }
+
+# bash 工具安全沙箱（shell 执行防护：文件/网络/危险命令 + 超时强杀）
+astorm-sandbox = { path = "../astorm-sandbox" }
+
+# 技能系统（skill/：SKILL.md 全文索引 + 发现 / 导入）
+tantivy = { workspace = true }
+tantivy-jieba = { workspace = true }
+serde_yaml = { workspace = true }
+zip = { workspace = true }
+flate2 = { workspace = true }
+tar = { workspace = true }
+
+# 定时任务（scheduler/：tokio-cron-scheduler）
+tokio-cron-scheduler = { workspace = true }
+
+[dev-dependencies]
+astorm-storage = { path = "../astorm-storage" }
+tokio = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+# 终端/MCP 子进程超时按进程组回收（kill(-pid)）
+libc = "0.2"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+# Windows 系统 API（Chrome Cookie 解密；Media_Ocr 等特性为历史图片 OCR 保留）
+windows = { version = "0.61", features = ["Media_Ocr", "Graphics_Imaging", "Storage", "Storage_Streams", "Globalization", "Win32_Foundation", "Win32_Security_Cryptography", "Win32_System_Memory"] }
+# Chrome Cookie 解密（CryptUnprotectData 解出主密钥 + AES-256-GCM）
+aes-gcm = "0.10"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# Chrome Cookie 解密（登录钥匙串取口令 + PBKDF2-HMAC-SHA1 + AES-128-CBC）
+security-framework = "3"
+aes = "0.8"
+cbc = "0.1"
+pbkdf2 = "0.12"
+sha1 = "0.10"

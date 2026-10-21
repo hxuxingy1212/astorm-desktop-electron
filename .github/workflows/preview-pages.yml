@@ -1,0 +1,73 @@
+name: Deploy preview to GitHub Pages
+
+# 构建 frontend/src/preview 下的介绍页 + 真实渲染层预览，并发布到 Pages。
+# 首次使用：仓库 Settings → Pages → Source 选 “GitHub Actions”，然后推一次 master/main。
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'frontend/src/preview/**'
+      - 'frontend/src/renderer/**'
+      - 'frontend/preview.vite.config.ts'
+      - 'frontend/uno.config.ts'
+      - 'frontend/package.json'
+      - 'frontend/pnpm-lock.yaml'
+      - 'scripts/sync-office.mjs'
+      - '.github/workflows/preview-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install frontend deps
+        run: pnpm -C frontend install --frozen-lockfile
+        env:
+          # 预览构建不需要 Electron 二进制，跳过下载可显著缩短 CI 时间
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+
+      - name: Prepare office viewer
+        # office kit 是 gitignored 的构建产物；缺失时脚本会写一个抛错占位组件，
+        # 保证 Vite 能解析 @astorm/office-viewer（预览不涉及 Office 文件，不会执行到）。
+        # 预览站不需要真实 kit，禁用下载避免 CI 额外拉取几十 MB。
+        env:
+          ASTORM_OFFICE_KIT_DISABLE_DOWNLOAD: '1'
+        run: pnpm run sync:office
+
+      - name: Build preview
+        run: pnpm -C frontend build:preview
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/preview-dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

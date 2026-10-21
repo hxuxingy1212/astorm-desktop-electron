@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>示例插件</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- 页头：品牌 + SDK 连接状态 -->
+    <header class="d-header">
+      <img src="./icon.svg" alt="插件图标" class="d-logo" />
+      <div class="d-header-main">
+        <div class="d-header-title">示例插件 <span class="d-version">v0.1.0</span></div>
+        <div class="d-header-sub">Astorm 插件系统官方演示 · <span id="greeting"></span></div>
+      </div>
+      <div class="d-status" id="status">
+        <span class="d-dot"></span><span>连接中…</span>
+      </div>
+    </header>
+
+    <main class="d-main">
+      <!-- ① 配置回显 -->
+      <section class="d-card">
+        <h2 class="d-card-title">① 配置回显 <code>sdk.config.get()</code></h2>
+        <p class="d-card-desc">
+          配置由「设置 → 插件」填写，主进程解密后经 SDK 下发。修改后回到本页即可看到变化。
+        </p>
+        <div class="d-kv">
+          <div class="d-kv-row"><span class="d-kv-key">问候语</span><code id="cfg-greeting">-</code></div>
+          <div class="d-kv-row"><span class="d-kv-key">主题色</span><code id="cfg-color">-</code></div>
+          <div class="d-kv-row"><span class="d-kv-key">示例 API（secret）</span><code id="cfg-api">-</code></div>
+        </div>
+      </section>
+
+      <!-- ② LLM 单次补全 -->
+      <section class="d-card">
+        <h2 class="d-card-title">② LLM 单次补全 <code>sdk.llm.chat()</code></h2>
+        <p class="d-card-desc">
+          复用本应用的供应商与模型配置（无需自己接 API）。未配置供应商时返回友好错误。
+        </p>
+        <div class="d-col">
+          <label class="d-label" for="llm-input">提示词</label>
+          <textarea id="llm-input" class="d-input d-textarea" rows="2">
+写一首关于秋天的七言绝句，不超过四句。</textarea
+          >
+          <div class="d-row">
+            <button id="llm-btn" class="d-btn d-btn-primary" type="button">
+              <span class="d-btn-icon">◆</span> 调用 LLM
+            </button>
+            <span id="llm-meta" class="d-meta"></span>
+          </div>
+          <div id="llm-out" class="d-llm-out" hidden></div>
+        </div>
+      </section>
+
+      <!-- ③ 聊天联动 -->
+      <section class="d-card">
+        <h2 class="d-card-title">③ 聊天联动 <code>sdk.chat.appendInput / sdk.chat.send</code></h2>
+        <p class="d-card-desc">
+          「填入发送框」把文本放进当前会话的输入框（用户按 Enter 发送）；「直接发送」按当前输入框的模式/权限立即发送。
+        </p>
+        <div class="d-col">
+          <textarea id="chat-msg" class="d-input d-textarea" rows="2">
+帮我看看这个项目里有没有 TODO 遗留，并总结一下。</textarea
+          >
+          <div class="d-row">
+            <button id="chat-append" class="d-btn" type="button">✎ 填入发送框</button>
+            <button id="chat-send" class="d-btn d-btn-warn" type="button">➦ 直接发送</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ④ 发给应用 -->
+      <section class="d-card">
+        <h2 class="d-card-title">④ 发送消息给应用 <code>sdk.plugin.sendToApp()</code></h2>
+        <p class="d-card-desc">应用会在插件页签内展示收到的插件消息。</p>
+        <div class="d-row">
+          <input id="ping-text" class="d-input d-input-flex" placeholder="想对应用说点什么？" />
+          <button id="ping-btn" class="d-btn d-btn-primary" type="button">发给应用</button>
+        </div>
+      </section>
+
+      <!-- ⑤ 接收应用消息 -->
+      <section class="d-card">
+        <h2 class="d-card-title">⑤ 接收应用消息 <code>sdk.app.onMessage()</code></h2>
+        <p class="d-card-desc">
+          应用侧插件页签工具栏的「发送消息给插件」按钮会把文本经 app.message 通道推到这里。
+        </p>
+        <ul id="msg-list" class="d-msg-list">
+          <li class="d-msg-empty">暂无消息（点击上方「发送消息给插件」试试）</li>
+        </ul>
+      </section>
+    <!-- ⑥ 会话级状态 -->
+      <section class="d-card">
+        <h2 class="d-card-title">⑥ 会话级状态 <code>sdk.state.get / sdk.state.set</code></h2>
+        <p class="d-card-desc">
+          状态按「会话 × 插件」保存（应用 localStorage）。切到其他会话再打开本插件，这里会显示那个会话自己存的内容——每个会话一份。
+        </p>
+        <div class="d-col">
+          <label class="d-label" for="state-memo">当前会话备忘（仅本插件在本会话可见）</label>
+          <span class="d-session-id">当前会话: <code id="state-sid">-</code></span>
+          <textarea id="state-memo" class="d-input d-textarea" rows="2" placeholder="写点只有这个会话能看到的备忘…"></textarea>
+          <div class="d-row">
+            <button id="state-save" class="d-btn d-btn-primary" type="button">保存到本会话</button>
+            <button id="state-clear" class="d-btn" type="button">清空</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="d-footer">
+      SDK v<span id="sdk-version">-</span> · 协议 v<span id="proto-version">-</span>
+    </footer>
+
+    <script src="astorm-plugin://__sdk__/astorm-sdk.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

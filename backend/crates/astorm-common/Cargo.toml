@@ -1,0 +1,20 @@
+[package]
+name = "astorm-common"
+version.workspace = true
+edition.workspace = true
+description = "公共数据模型与接口契约：会话 API（core/napi 用）+ 存储记录与契约（storage/core 用）"
+license.workspace = true
+keywords = ["model", "interface", "storage", "session"]
+categories = ["development-tools"]
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+# 仅复用 TokenUsage（session_usage 字段）；不修改 llm-provider 任何代码
+llm-provider = { path = "../llm-provider" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }

@@ -1,0 +1,31 @@
+[package]
+name = "astorm-napi"
+version.workspace = true
+edition.workspace = true
+description = "Electron 后端 napi 绑定层：应用生命周期 + 全局状态（引用 astorm-core，不含业务实现）"
+license.workspace = true
+keywords = ["napi", "electron", "binding"]
+categories = ["development-tools"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+astorm-common = { path = "../astorm-common" }
+astorm-core = { path = "../astorm-core" }
+astorm-mail = { path = "../astorm-mail" }
+astorm-sandbox = { path = "../astorm-sandbox" }
+astorm-storage = { path = "../astorm-storage" }
+llm-provider = { path = "../llm-provider" }
+
+napi = { workspace = true }
+napi-derive = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+# 阻塞型导出（本机 Chrome Cookie 导入）在 worker 线程执行，避免卡住 Electron 主进程
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+uuid = { workspace = true }
+
+[build-dependencies]
+napi-build.workspace = true

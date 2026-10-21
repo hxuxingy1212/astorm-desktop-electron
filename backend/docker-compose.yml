@@ -1,0 +1,37 @@
+# astorm-server 单用户容器（无头 API + Web UI + CLI）
+#
+# 用法：在 backend/ 下准备 .env（只需 ASTORM_TOKEN），然后 `docker compose up -d --build`。
+# LLM 供应商**不预置**：打开 http://<host>:8787 登录后，在「设置 → 模型」里添加
+# （存 /data/config/providers.json，保存即热更）。
+# MCP 服务器：设置 → 工具 → MCP 里写 /data/config/mcp_servers.json（npx / uvx / python
+# 均可直接用，镜像内置 node + python3 + uv）；连接器在 core（Rust），启动自动连接启用项。
+# CLI 连接：ASTORM_SERVER=http://127.0.0.1:8787 ASTORM_TOKEN=... astorm tasks
+
+services:
+  astorm-server:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    image: astorm-server:dev
+    container_name: astorm-server
+    ports:
+      - "8787:8787"
+    environment:
+      ASTORM_TOKEN: ${ASTORM_TOKEN:?请在 backend/.env 或环境变量设置访问令牌}
+      TZ: ${TZ:-Asia/Shanghai}
+      # 工作空间/数据/配置都在 /data 卷内：工作空间根缺省 = 数据根 → /data/workspace
+      # 可选：自动化/CI 需要预置供应商时再设这三项（三件套齐全才生效，
+      # 仅在配置文件无供应商时合成名为 default 的供应商）。日常使用不必设。
+      # 显式转发（`--env-file` 只负责 compose 插值，不会自动注入容器）。
+      ASTORM_LLM_BASE_URL: ${ASTORM_LLM_BASE_URL:-}
+      ASTORM_LLM_API_KEY: ${ASTORM_LLM_API_KEY:-}
+      ASTORM_LLM_MODEL: ${ASTORM_LLM_MODEL:-}
+    # Linux 上 host.docker.internal 不会自动解析（Docker Desktop 才有）
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - astorm-data:/data
+    restart: unless-stopped
+
+volumes:
+  astorm-data:

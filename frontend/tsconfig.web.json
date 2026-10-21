@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "baseUrl": ".",
+    "paths": {
+      "@astorm/office-viewer/style.css": [
+        "resources/office/viewer/office-viewer.css"
+      ],
+      "@astorm/office-viewer": [
+        "resources/office/viewer"
+      ],
+      "@/*": [
+        "src/renderer/src/*"
+      ]
+    },
+    "types": [
+      "vite/client"
+    ],
+    "outDir": "out/types-web"
+  },
+  "include": [
+    "src/renderer/src/**/*",
+    "src/renderer/src/**/*.vue",
+    "src/preload/index.d.ts"
+  ]
+}

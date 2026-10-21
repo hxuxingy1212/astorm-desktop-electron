@@ -1,0 +1,37 @@
+{
+  "_comment": "随包分发的两份外部产物。sync-office / sync-agent-browser 默认从这里读取版本与校验信息；可用环境变量覆盖（见 docs/external-artifacts.md）。",
+  "officeKit": {
+    "repo": "hxuxingy1212/astorm-office",
+    "version": "0.2.0",
+    "tag": "v0.2.0",
+    "assetPattern": "office-kit-{version}-{platform}.tar.gz",
+    "checksumAsset": "SHA256SUMS"
+  },
+  "agentBrowser": {
+    "repo": "vercel-labs/agent-browser",
+    "version": "0.37.1",
+    "tag": "v0.37.1",
+    "assets": {
+      "darwin-arm64": {
+        "name": "agent-browser-darwin-arm64",
+        "sha256": "e52f06476ea0f1d14357c1924ce1d7f1bf08279f2642d74ccfa7ee935c46aea1"
+      },
+      "darwin-x64": {
+        "name": "agent-browser-darwin-x64",
+        "sha256": "c79d1e0525c0bf79df9eec355269ae40bcda9c4a3fce3f242c24faecaaaeef84"
+      },
+      "linux-arm64": {
+        "name": "agent-browser-linux-arm64",
+        "sha256": "d54d3e1262dc1aa0906e0677adc6d0cbb40d1274631f4cf77136bf23a0bc20e9"
+      },
+      "linux-x64": {
+        "name": "agent-browser-linux-x64",
+        "sha256": "f8e5f9294bd0da70dda61854f12004fd61c668cd682bfb600cdf6d0df73dea69"
+      },
+      "win32-x64": {
+        "name": "agent-browser-win32-x64.exe",
+        "sha256": "29a003139ff4eb96fa4d1ed341830b26eb3e082843bf776b4e88ad3443bb8fde"
+      }
+    }
+  }
+}

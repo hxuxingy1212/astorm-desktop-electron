@@ -1,0 +1,27 @@
+[package]
+name = "llm-provider"
+version.workspace = true
+edition.workspace = true
+description = "LLM 提供方层：OpenAI 兼容 SSE 流式 HTTP 客户端（限流 / 熔断 / 重试 / 结构化输出）"
+license.workspace = true
+keywords = ["llm", "agent", "http", "stream", "sse"]
+categories = ["asynchronous", "web-programming::http-client"]
+
+[dependencies]
+bytes.workspace = true
+futures.workspace = true
+jsonschema.workspace = true
+napi.workspace = true
+napi-derive.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+futures.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true

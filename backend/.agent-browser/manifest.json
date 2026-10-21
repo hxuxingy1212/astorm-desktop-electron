@@ -1,0 +1,5 @@
+{
+  "synced": false,
+  "reason": "构建前运行 node backend/scripts/sync-agent-browser-src.mjs（需 agent-browser 源码）；桌面端由 scripts/sync-agent-browser.mjs 下载上游预编译二进制",
+  "version": "0.37.1"
+}

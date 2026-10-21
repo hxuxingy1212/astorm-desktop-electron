@@ -1,0 +1,4 @@
+# Shell/Python 脚本必须保持 LF：CRLF 会让 bash 把 \r 当成参数的一部分
+*.sh text eol=lf
+*.py text eol=lf
+*.mjs text eol=lf

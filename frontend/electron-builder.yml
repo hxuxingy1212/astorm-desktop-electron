@@ -1,0 +1,95 @@
+appId: com.astorm.agent
+productName: Astorm Agent
+directories:
+  output: release
+  buildResources: build
+# 安装包体积:只装「运行必需」。logo-src 是品牌源图(仅 gen-app-icon.py 用)、
+# out/types-web 是 typecheck 产物,均不进 asar;astorm-backend.node 经 extraResources
+# 放到 asar 外(napi.ts 打包后从 process.resourcesPath 加载,asar 内那份是死重)。
+files:
+  - out/**
+  - resources/**
+  - '!out/**/*.map'
+  - '!out/types-web/**'
+  - '!resources/bin/**'
+  - '!resources/agent-browser/**'
+  - '!resources/office/**'
+  - '!resources/logo-src/**'
+  - '!resources/astorm-backend.node'
+# Electron 自带 200+ 语言目录(mac 版 ~46MB),应用只有中英两种,裁掉其余。
+# electron-builder 按“wanted 以 fileLanguage 开头”匹配：
+#   macOS 文件名是 en.lproj / zh_CN.lproj；Windows/Linux 是 en-US.pak / zh-CN.pak。
+# 同时给出两种写法，否则 Win/Linux 会一个都匹配不上并把所有 .pak 删光。
+electronLanguages:
+  - en
+  - en-US
+  - zh_CN
+  - zh-CN
+compression: maximum
+# 插件包(仓库根 plugins/)随安装分发,主进程运行时从 resources/plugins 读取托管;
+# 该目录仅含净安装包(源码工程在仓库根 plugins_dev/,不在分发范围内),node_modules 一律排除
+extraResources:
+  - from: ../plugins
+    to: plugins
+    filter:
+      - '**/*'
+      - '!**/node_modules/**'
+  # Rust 后端 napi 绑定:asar 外(napi.ts 打包后从 process.resourcesPath 加载;
+  # 由 scripts/sync-backend.mjs 按当前平台编译同步,产物 gitignored)
+  - from: resources/astorm-backend.node
+    to: astorm-backend.node
+  # 浏览器自动化 CLI(agent-browser,见 scripts/sync-agent-browser.mjs;asar 内不可 spawn,
+  # 按平台分目录 <os>-<arch>/,打包机上只会有当前平台的产物)
+  - from: resources/agent-browser
+    to: agent-browser
+    filter:
+      - '**/*'
+  # astorm-office 套件(四 CLI + 内置 skill + 预览组件,见 scripts/sync-office.mjs;
+  # CLI 须 asar 外可 spawn,SKILL.md 树须后端可读盘注册为内置技能)
+  - from: resources/office
+    to: office
+    filter:
+      - '**/*'
+  # 页面渲染助手(隐藏 Chromium 窗口 + stealth 反爬;websearch/webfetch 共用,须在 asar 外可 spawn)
+  - from: resources/page-render.cjs
+    to: page-render.cjs
+  - from: resources/stealth-preload.cjs
+    to: stealth-preload.cjs
+# macOS:声明系统权限用途说明(request 麦克风/摄像头时系统弹窗需要,缺失会崩溃)
+mac:
+  # 图标取 buildResources/icon.icns
+  # 本地/内部分发用 ad-hoc 签名（identity: "-"）；正式分发需替换为 Developer ID
+  # 证书并配置 notarize（见 docs/ 打包说明）。electron-builder 26 在 identity 未设置时
+  # 是“跳过签名”而不是 ad-hoc，会被 Gatekeeper 直接拒绝。
+  identity: '-'
+  hardenedRuntime: true
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  # arch 不写死 = 跟随打包机:后端 .node / office CLI / agent-browser 均由 sync 脚本按
+  # 本机架构编译,双架构包须靠 CI 矩阵(arm64 与 x64 打包机各出一个),不可在单机上交叉打
+  target:
+    - dmg
+    - zip
+  category: public.app-category.productivity
+  extendInfo:
+    NSMicrophoneUsageDescription: Astorm Agent 需要麦克风权限用于语音输入与录音。
+    NSCameraUsageDescription: Astorm Agent 需要摄像头权限用于拍照与视频采集。
+    NSAppleEventsUsageDescription: Astorm Agent 需要自动化权限用于控制其他应用。
+linux:
+  icon: build/icon.png
+  category: Utility
+  target:
+    - AppImage
+    - deb
+    - rpm
+  artifactName: ${productName}-${version}-${arch}.${ext}
+win:
+  icon: resources/icon.png
+  target: nsis
+  artifactName: ${productName}-${version}-${arch}-setup.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  # 应用无自动更新链路,关掉差量更新包(免产 ~安装包同体积的 blockmap,省构建时间与磁盘)
+  differentialPackage: false
