@@ -7,7 +7,7 @@
  *
  * 后端枚举(napi string enum,见 docs/backend-contract.md):
  *   mode: plan | execute | auto     permission: manual | auto
- *   reasoning_effort: none | low | medium | high
+ *   reasoning_effort: none | low | medium | high | max
  */
 
 /** 对话模式:计划 / 执行 / 自动 */
@@ -19,7 +19,7 @@ export type ChatPermission = 'ask' | 'allow'
 export interface SessionSettingsView {
   mode: ChatMode
   permission: ChatPermission
-  /** 思考强度滑杆 0-10(后端只存四档,见 effortOf) */
+  /** 思考强度滑杆 0-10(后端只存五档,见 effortOf) */
   thinkingLevel: number
   provider: string
   model: string
@@ -45,15 +45,22 @@ export const PERMISSION_FROM_BACKEND: Record<string, ChatPermission> = {
   manual: 'ask',
   auto: 'allow'
 }
-/** 后端四档思考强度 → 滑杆数值(仅在后端档位与本地档位不同档时用于回落) */
-export const EFFORT_LEVEL: Record<string, number> = { none: 0, low: 3, medium: 6, high: 9 }
+/** 后端五档思考强度 → 滑杆数值(仅在后端档位与本地档位不同档时用于回落) */
+export const EFFORT_LEVEL: Record<string, number> = {
+  none: 0,
+  low: 3,
+  medium: 6,
+  high: 8,
+  max: 10
+}
 
-/** 思考强度滑杆 0-10 → 后端四档(粗粒度;同档内的数值差别后端不保留) */
+/** 思考强度滑杆 0-10 → 后端五档(粗粒度;同档内的数值差别后端不保留) */
 export function effortOf(level?: number): string {
   if (level === undefined || level <= 0) return 'none'
   if (level <= 3) return 'low'
   if (level <= 6) return 'medium'
-  return 'high'
+  if (level <= 8) return 'high'
+  return 'max'
 }
 
 /** UI 设置片段 → 后端 update_session_settings 请求体(只带显式给出的字段,缺省 = 后端保持) */

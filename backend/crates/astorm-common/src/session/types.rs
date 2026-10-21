@@ -39,6 +39,8 @@ pub enum ReasoningEffort {
     Medium,
     /// 高
     High,
+    /// 最高（DeepSeek V4 Pro 的 max 档）
+    Max,
 }
 
 impl ReasoningEffort {
@@ -49,7 +51,22 @@ impl ReasoningEffort {
             ReasoningEffort::Low => Some("low"),
             ReasoningEffort::Medium => Some("medium"),
             ReasoningEffort::High => Some("high"),
+            ReasoningEffort::Max => Some("max"),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ReasoningEffort;
+
+    #[test]
+    fn reasoning_effort_strings() {
+        assert_eq!(ReasoningEffort::None.as_str(), None);
+        assert_eq!(ReasoningEffort::Low.as_str(), Some("low"));
+        assert_eq!(ReasoningEffort::Medium.as_str(), Some("medium"));
+        assert_eq!(ReasoningEffort::High.as_str(), Some("high"));
+        assert_eq!(ReasoningEffort::Max.as_str(), Some("max"));
     }
 }
 

@@ -20,7 +20,7 @@ pub struct AskLlmRequest {
     pub provider: Option<String>,
     /// 对话消息（role: system / user / assistant）
     pub messages: Vec<ChatMessage>,
-    /// 思考强度（可选）：low / medium / high
+    /// 思考强度（可选）：low / medium / high / max
     pub reasoning_effort: Option<String>,
 }
 

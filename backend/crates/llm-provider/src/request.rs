@@ -262,7 +262,7 @@ pub struct ChatRequest {
     pub messages: Vec<ChatMessage>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<Vec<ToolDef>>,
-    /// 思考强度（OpenAI reasoning_effort：low / medium / high，部分模型支持）
+    /// 思考强度（OpenAI reasoning_effort：low / medium / high / max，部分模型支持）
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reasoning_effort: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -291,7 +291,7 @@ impl ChatRequest {
         self
     }
 
-    /// 设置思考强度（OpenAI `reasoning_effort`：low / medium / high）。
+    /// 设置思考强度（OpenAI `reasoning_effort`：low / medium / high / max）。
     pub fn with_reasoning_effort(mut self, effort: impl Into<String>) -> Self {
         self.reasoning_effort = Some(effort.into());
         self

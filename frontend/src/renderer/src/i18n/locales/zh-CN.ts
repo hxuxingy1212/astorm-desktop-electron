@@ -59,7 +59,7 @@
     modelApiKey: '访问密钥',
     modelApiKeyHint: '供应商控制台里的 API Key',
     modelName: '模型名',
-    modelNameHint: '如 deepseek-chat',
+    modelNameHint: '如 deepseek-v4-pro',
     modelProviderName: '名称',
     modelProviderNameHint: '供应商标识',
     modelApiFormat: '协议',
@@ -366,7 +366,8 @@
     thinkingNone: '无',
     thinkingLow: '低',
     thinkingMedium: '中',
-    thinkingHigh: '高'
+    thinkingHigh: '高',
+    thinkingMax: '最高'
   },
   settings: {
     title: '系统',
@@ -1122,6 +1123,7 @@
       thinkingLow: '低',
       thinkingMedium: '中',
       thinkingHigh: '高',
+      thinkingMax: '最高',
       model: '模型',
       modelPlaceholder: '选择模型',
       noModels: '无模型配置',

@@ -59,7 +59,7 @@
     modelApiKey: 'API key',
     modelApiKeyHint: 'The API key from your provider console',
     modelName: 'Model',
-    modelNameHint: 'e.g. deepseek-chat',
+    modelNameHint: 'e.g. deepseek-v4-pro',
     modelProviderName: 'Name',
     modelProviderNameHint: 'Provider identifier',
     modelApiFormat: 'Protocol',
@@ -367,7 +367,8 @@
     thinkingNone: 'None',
     thinkingLow: 'Low',
     thinkingMedium: 'Medium',
-    thinkingHigh: 'High'
+    thinkingHigh: 'High',
+    thinkingMax: 'Max'
   },
   settings: {
     title: 'System',
@@ -1129,6 +1130,7 @@
       thinkingLow: 'Low',
       thinkingMedium: 'Medium',
       thinkingHigh: 'High',
+      thinkingMax: 'Max',
       model: 'Model',
       modelPlaceholder: 'Select model',
       noModels: 'No model configured',

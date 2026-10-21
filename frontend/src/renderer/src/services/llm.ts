@@ -18,7 +18,7 @@ export interface AskLlmRequest {
   /** 供应商名（缺省用默认供应商） */
   provider?: string
   messages: AskLlmMessage[]
-  /** 思考强度（可选）：low / medium / high */
+  /** 思考强度（可选）：low / medium / high / max */
   reasoningEffort?: string
 }
 

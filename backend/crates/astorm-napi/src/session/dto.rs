@@ -156,7 +156,7 @@ impl From<CorePermissionMode> for PermissionMode {
     }
 }
 
-/// 思考强度：无 / 低 / 中 / 高。
+/// 思考强度：无 / 低 / 中 / 高 / 最高。
 #[napi(string_enum = "kebab-case")]
 #[derive(Debug, Clone, Copy, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -165,6 +165,7 @@ pub enum ReasoningEffort {
     Low,
     Medium,
     High,
+    Max,
 }
 
 impl From<ReasoningEffort> for CoreReasoningEffort {
@@ -174,6 +175,7 @@ impl From<ReasoningEffort> for CoreReasoningEffort {
             ReasoningEffort::Low => CoreReasoningEffort::Low,
             ReasoningEffort::Medium => CoreReasoningEffort::Medium,
             ReasoningEffort::High => CoreReasoningEffort::High,
+            ReasoningEffort::Max => CoreReasoningEffort::Max,
         }
     }
 }
@@ -185,6 +187,7 @@ impl From<CoreReasoningEffort> for ReasoningEffort {
             CoreReasoningEffort::Low => ReasoningEffort::Low,
             CoreReasoningEffort::Medium => ReasoningEffort::Medium,
             CoreReasoningEffort::High => ReasoningEffort::High,
+            CoreReasoningEffort::Max => ReasoningEffort::Max,
         }
     }
 }

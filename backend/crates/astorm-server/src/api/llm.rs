@@ -40,7 +40,7 @@ pub struct AskBody {
     #[serde(default)]
     pub provider: Option<String>,
     pub messages: Vec<ChatMessageBody>,
-    /// 思考强度（low / medium / high）
+    /// 思考强度（low / medium / high / max）
     #[serde(default)]
     pub reasoning_effort: Option<String>,
 }

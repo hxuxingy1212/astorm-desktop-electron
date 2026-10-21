@@ -296,7 +296,7 @@ listSessionDeliverables(session_id): string
 // 单次 LLM 补全(插件 SDK `llm.chat` 通路;不创建会话;事件经全局事件总线回传)
 askLlm(request, callId): void            // 启动即返回
 // request 字段(入参为 camelCase): { model?, provider?, messages: [{ role, content }],
-//   reasoningEffort?: "low"|"medium"|"high" }  缺省 model/provider 用默认值
+//   reasoningEffort?: "low"|"medium"|"high"|"max" }  缺省 model/provider 用默认值
 // 总线事件(subscribe 流中): {"type":"llm","call_id":callId,
 //   "kind":"chunk"|"reasoning"|"reset"|"end"|"error","delta"?,"usage"?,"finishReason"?,"message"?}
 // 契约:chunk/reasoning 为增量;end 后无更多;error 后补一条 end
@@ -306,10 +306,10 @@ askLlm(request, callId): void            // 启动即返回
 //      (复用 LlmRegistry 路由客户端与模型 → llm-provider::chat_stream → 事件入全局事件总线)
 
 // 枚举(string enum):mode: plan|execute|auto ... permission: manual|auto
-//   ... reasoning_effort: none|low|medium|high
+//   ... reasoning_effort: none|low|medium|high|max
 ```
 
-**参数映射(前端 → 后端)**:mode `build→execute`;permission `ask→manual`、`allow→auto`;思考强度 0-10 → `none/low/medium/high`。
+**参数映射(前端 → 后端)**:mode `build→execute`;permission `ask→manual`、`allow→auto`;思考强度 0-10 → `none/low/medium/high/max`（0→none, 1-3→low, 4-6→medium, 7-8→high, 9-10→max）。
 
 > **会话设置的所有权**:`mode` / `permission` / `reasoning_effort` / `model` / `provider`
 > 是**会话的持久化属性**。`createSession` 随首条消息把它们写进会话记录；之后一律走

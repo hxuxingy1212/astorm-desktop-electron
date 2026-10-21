@@ -12,8 +12,8 @@
  *   搜索框 Enter 选中第一个命中。外部 mousedown 关闭，选中后焦点还原到触发器。
  *
  * 数据：模型目录读 modelsStore（供应商 → 模型，均以 name 为标识，与设置/会话设置一致）；
- * 推理等级沿用会话设置 thinkingLevel(0-10) 的阈值区间（0→无，1-3→低，4-6→中，7-10→高），
- * 菜单选项取各区间代表值（0/2/5/8）。改动经 `change` 事件抛出补丁，由父组件下发会话设置。
+ * 推理等级沿用会话设置 thinkingLevel(0-10) 的阈值区间（0→无，1-3→低，4-6→中，7-8→高，9-10→最高），
+ * 菜单选项取各区间代表值（0/2/5/8/10）。改动经 `change` 事件抛出补丁，由父组件下发会话设置。
  */
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -62,15 +62,17 @@ const EFFORT_OPTIONS = [
   { value: 0, labelKey: 'chat.thinkingNone' },
   { value: 2, labelKey: 'chat.thinkingLow' },
   { value: 5, labelKey: 'chat.thinkingMedium' },
-  { value: 8, labelKey: 'chat.thinkingHigh' }
+  { value: 8, labelKey: 'chat.thinkingHigh' },
+  { value: 10, labelKey: 'chat.thinkingMax' }
 ] as const
 
-/** 数值 → 级别文案（阈值：0→无, 1-3→低, 4-6→中, 7-10→高） */
+/** 数值 → 级别文案（阈值：0→无, 1-3→低, 4-6→中, 7-8→高, 9-10→最高） */
 function effortLabelOf(level: number): string {
   if (level <= 0) return t('chat.thinkingNone')
   if (level <= 3) return t('chat.thinkingLow')
   if (level <= 6) return t('chat.thinkingMedium')
-  return t('chat.thinkingHigh')
+  if (level <= 8) return t('chat.thinkingHigh')
+  return t('chat.thinkingMax')
 }
 const effortLabel = computed(() => effortLabelOf(props.thinkingLevel))
 function isActiveEffort(value: number): boolean {

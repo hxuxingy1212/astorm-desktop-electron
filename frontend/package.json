@@ -1,6 +1,6 @@
 {
   "name": "astorm-agent-electron",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Astorm desktop agent — Electron + Vue 3 + Arco Design",
   "main": "./out/main/index.js",
   "private": true,
